@@ -1,6 +1,7 @@
 #' Allele Frequency Analysis
 #'
 #' Perform an Allele Frequency Analysis uisng CervusCL
+#' @import ini
 #' @param cervusCL_location Path to cervusCL.exe (CERVUS is found at http://www.fieldgenetics.com)
 #' @param analysis_folder Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
 #' @param analysis_name Can specify a custom name for the analysis, which will be saved as the .crv filename
