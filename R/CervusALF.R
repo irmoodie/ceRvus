@@ -5,27 +5,29 @@
 #' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
 #' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
 #' @import ini
-#' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com)
+#' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).
 #' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
-#' @param AnalysisName Can specify a custom name for the analysis, which will be saved in the output filenames
-#' @param GenotypeFile_FileName The filename of the genotype file. (e.g. genotype.csv)
-#' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row
-#' @param GenotypeFile_ReadLocusNames TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE)
-#' @param GenotypeFile_IDColumnNumber Column number that identifies each individual
-#' @param GenotypeFile_FirstAlleleColumnNumber Column number which contains the first allele
+#' @param AnalysisName Can specify a custom name for the analysis, which will be saved in the output filenames.
+#' @param ImportALF TRUE/FALSE: Import the alele frequency analysis summary tables in an R friendly format.
+#' @param GenotypeFile_FileName The filename of the genotype file. (e.g. genotype.csv).
+#' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row.
+#' @param GenotypeFile_ReadLocusNames TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE).
+#' @param GenotypeFile_IDColumnNumber Column number that identifies each individual.
+#' @param GenotypeFile_FirstAlleleColumnNumber Column number which contains the first allele.
 #' @param GenotypeFile_ColumnsPerLocus What format are the loci in? One allele per column = 2 columns per locus. See Cervus helpfiles for more info.
-#' @param GenotypeFile_NLoci Number of loci in the genotype file
-#' @param DoHardyWeinberg TRUE/FALSE: Do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium
-#' @param HWMinExpectedFrequency Default is 5
-#' @param UseYatesCorrection TRUE/FALSE: Use Yates correction when calculating chi-square values with one degree of freedom
-#' @param UseBonferroniCorrection TRUE/FALSE: Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously
-#' @param DoNullAllele TRUE/FALSE: Estimate null allele frequency
-#' @return Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console.
+#' @param GenotypeFile_NLoci Number of loci in the genotype file.
+#' @param DoHardyWeinberg TRUE/FALSE: Do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium.
+#' @param HWMinExpectedFrequency Default is 5.
+#' @param UseYatesCorrection TRUE/FALSE: Use Yates correction when calculating chi-square values with one degree of freedom.
+#' @param UseBonferroniCorrection TRUE/FALSE: Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously.
+#' @param DoNullAllele TRUE/FALSE: Estimate null allele frequency.
+#' @return Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console. If ImportALF is set to TURE, the function also imports the summarised data. 
 #' @examples 
 #' CervusALF(
 #'   CervusCLPath = "C:\\Program Files (x86)\\Field Genetics\\Cervus\\Cervus CL\\CervusCL.exe",
 #'   AnalysisFolderPath = "C:\\Analysis",
 #'   AnalysisName = "Cervus_Analysis",
+#'   ImportALF = TRUE,
 #'   GenotypeFile_FileName = "genotype_file.csv",
 #'   GenotypeFile_HasHeader = TRUE,
 #'   GenotypeFile_ReadLocusNames = TRUE,
@@ -42,20 +44,21 @@
 #' @export
 
 CervusALF <- function(CervusCLPath,
-                       AnalysisFolderPath, 
-                       AnalysisName = "Cervus_Analysis", 
-                       GenotypeFile_FileName,
-                       GenotypeFile_HasHeader = TRUE,
-                       GenotypeFile_ReadLocusNames = TRUE,
-                       GenotypeFile_IDColumnNumber = 1,
-                       GenotypeFile_FirstAlleleColumnNumber = 2,
-                       GenotypeFile_ColumnsPerLocus = 2,
-                       GenotypeFile_NLoci,
-                       DoHardyWeinberg = TRUE,
-                       HWMinExpectedFrequency = 5,
-                       UseYatesCorrection = TRUE,
-                       UseBonferroniCorrection = TRUE,
-                       DoNullAllele = TRUE
+                      AnalysisFolderPath, 
+                      AnalysisName = "Cervus_Analysis",
+                      ImportALF = TRUE,
+                      GenotypeFile_FileName,
+                      GenotypeFile_HasHeader = TRUE,
+                      GenotypeFile_ReadLocusNames = TRUE,
+                      GenotypeFile_IDColumnNumber = 1,
+                      GenotypeFile_FirstAlleleColumnNumber = 2,
+                      GenotypeFile_ColumnsPerLocus = 2,
+                      GenotypeFile_NLoci,
+                      DoHardyWeinberg = TRUE,
+                      HWMinExpectedFrequency = 5,
+                      UseYatesCorrection = TRUE,
+                      UseBonferroniCorrection = TRUE,
+                      DoNullAllele = TRUE
 ) {
   
   # Specify paths to files
@@ -118,6 +121,13 @@ CervusALF <- function(CervusCLPath,
       
       system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
       system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"')) # display the results
+      
+      ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
+      
+      if (isTRUE(ImportALF)) {
+        ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
+        return(ALFSummary)
+      }
       
     } else {
       cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
