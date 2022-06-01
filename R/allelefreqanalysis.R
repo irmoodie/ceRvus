@@ -2,23 +2,28 @@
 #'
 #' Perform an Allele Frequency Analysis uisng CervusCL
 #' @import ini
-#' @param cervusCL_location Path to cervusCL.exe (CERVUS is found at http://www.fieldgenetics.com)
-#' @param analysis_folder Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
-#' @param analysis_name Can specify a custom name for the analysis, which will be saved as the .crv filename
-#' @param genotype_file The filename of the genotype file. Currently, the function expects a .csv file with the first column as the id, then the loci starting in column two. Headers are assumed and loci names are retained.
-#' @param NLoci Number of loci in the genotype file
-#' @param DoHardyWeinberg TRUE/FALSE Do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium
+#' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com)
+#' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
+#' @param AnalysisName Can specify a custom name for the analysis, which will be saved as the .crv filename
+#' @param GenotypeFile_FileName The filename of the genotype file. (e.g. genotype.csv)
+#' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row
+#' @param GenotypeFile_ReadLocusNames TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE)
+#' @param GenotypeFile_IDColumnNumber Column number that identifies each individual
+#' @param GenotypeFile_FirstAlleleColumnNumber Column number which contains the first allele
+#' @param GenotypeFile_ColumnsPerLocus What format are the loci in? One allele per column = 2 columns per loci. See Cervus helpfiles for more info.
+#' @param GenotypeFile_NLoci Number of loci in the genotype file
+#' @param DoHardyWeinberg TRUE/FALSE: Do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium
 #' @param HWMinExpectedFrequency Default is 5
-#' @param UseYatesCorrection TRUE/FALSE Use Yates correction when calculating chi-square values with one degree of freedom
-#' @param UseBonferroniCorrection TRUE/FALSE Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously
+#' @param UseYatesCorrection TRUE/FALSE: Use Yates correction when calculating chi-square values with one degree of freedom
+#' @param UseBonferroniCorrection TRUE/FALSE: Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously
 #' @param DoNullAllele TRUE/FALSE Estimate null allele frequency
 #' @return Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console.
 #' @examples 
-#' cervus_alf(cervusCL_location = cervusCL_location,
-#'            analysis_folder = analysis_folder,
-#'            genotype_file = "genotype_file.csv",
-#'            analysis_name = "test_analysis",
-#'            NLoci = 6,
+#' cervus_alf(CervusCLPath = cervusCL_location,
+#'            AnalysisFolderPath = analysis_folder,
+#'            GenotypeFile = "genotype_file.csv",
+#'            AnalysisName = "test_analysis",
+#'            GenotypeFile_NLoci = 6,
 #'            DoHardyWeinberg = TRUE,
 #'            HWMinExpectedFrequency = 5,
 #'            UseYatesCorrection = TRUE,
@@ -28,11 +33,16 @@
 #' 
 #' @export
 
-cervus_alf <- function(cervusCL_location,
-                       analysis_folder, 
-                       analysis_name = "CERVUS_Analysis", 
-                       genotype_file,
-                       NLoci,
+CervusALF <- function(CervusCLPath,
+                       AnalysisFolderPath, 
+                       AnalysisName = "CERVUS_Analysis", 
+                       GenotypeFile_FileName,
+                       GenotypeFile_HasHeader = TRUE,
+                       GenotypeFile_ReadLocusNames = TRUE,
+                       GenotypeFile_IDColumnNumber = 1,
+                       GenotypeFile_FirstAlleleColumnNumber = 2,
+                       GenotypeFile_ColumnsPerLocus = 2,
+                       GenotypeFile_NLoci,
                        DoHardyWeinberg = TRUE,
                        HWMinExpectedFrequency = 5,
                        UseYatesCorrection = TRUE,
@@ -40,13 +50,15 @@ cervus_alf <- function(cervusCL_location,
                        DoNullAllele = TRUE
 ) {
   
-  GenotypeFileName <- file.path(analysis_folder, genotype_file, fsep = "\\")
-  AnalysisSettingsCrv <- file.path(analysis_folder, paste0(analysis_name, ".crv"), fsep = "\\")
-  AlleleFrequencySummaryFileName <- file.path(analysis_folder, "AlleleFrequencyAnalysis.txt", fsep = "\\")
-  AlleleFrequencyDataFileName <- file.path(analysis_folder, "AlleleFrequencyAnalysis.alf", fsep = "\\")
+  # Specify paths to files
+  pathGenotypeFile <- file.path(AnalysisFolderPath, GenotypeFile_FileName, fsep = "\\")
+  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName, ".crv"), fsep = "\\")
+  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, "AlleleFrequencyAnalysis.txt", fsep = "\\")
+  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, "AlleleFrequencyAnalysis.alf", fsep = "\\")
   
-  if (!missing(cervusCL_location)) {
-    if (file.exists(cervusCL_location)) {
+  # Check that CervusCLPath points to something
+  if (!missing(CervusCLPath)) {
+    if (file.exists(CervusCLPath)) {
       cervus_crv <- list(
         ProgramInfo = list(
           "ProgramName" = "Cervus",
@@ -59,19 +71,19 @@ cervus_alf <- function(cervusCL_location,
           "Code" = ""
         ),
         FileInfo = list(
-          "FileName" = AnalysisSettingsCrv, # must be absolute path (e.g. C:\\...)
+          "FileName" = pathAnalysisSettings, # must be absolute path (e.g. C:\\...)
           "FileType" = ".crv",
           "CreationDate" = format(Sys.time(), usetz = FALSE)
         ),
         GenotypeFile = list(
-          "FileName" = GenotypeFileName, # must be absolute path (e.g. C:\\...)
-          "HeaderRow" = "1", # If header row present, set to "1", if not set to "0"
-          "ReadLocusNames" = "1", # To read the names of loci, set to "1",
-          "FirstAlleleColumnNumber" = "2", # column number where alleles start,
-          "IDColumnNumber" = "1", # column number that identifies each individual sampled,
-          "NLoci" = paste0(NLoci), # number of loci to be used
+          "FileName" = pathGenotypeFile, # must be absolute path (e.g. C:\\...)
+          "HeaderRow" = paste(as.integer(GenotypeFile_HasHeader)), # If header row present, set to "1", if not set to "0"
+          "ReadLocusNames" = paste(as.integer(GenotypeFile_ReadLocusNames)), # To read the names of loci, set to "1",
+          "FirstAlleleColumnNumber" = paste0(GenotypeFile_FirstAlleleColumnNumber), # column number where alleles start,
+          "IDColumnNumber" = paste0(GenotypeFile_IDColumnNumber), # column number that identifies each individual sampled,
+          "NLoci" = paste0(GenotypeFile_NLoci), # number of loci to be used
           "PropLociTyped" = "0", # should remain as "0" here,
-          "ColumnsPerLocus" = "2", # set as "2" assuming the default input format for CERVUS
+          "ColumnsPerLocus" = paste0(GenotypeFile_ColumnsPerLocus), # set as "2" assuming the default input format for CERVUS
           "SexColumn" = "0", # should probably remain as "0", don't think it would be required here
           "UnknownSexLabel" = ""
         ),
@@ -79,10 +91,10 @@ cervus_alf <- function(cervusCL_location,
           "FileName" = "", # must be absolute path (e.g. C:\\...)
           "HeaderRow" = "1", # If header row present, set to "1", if not set to "0"
           "UseSameCodingForAllLoci" = "1", # should probably be kept as "1"
-          "GenotypeFileName" = GenotypeFileName # must be absolute path (e.g. C:\\...)
+          "GenotypeFileName" = pathGenotypeFile # must be absolute path (e.g. C:\\...)
         ),
         AlleleFrequencySummaryFile = list(
-          "FileName" = AlleleFrequencySummaryFileName, # must be absolute path (e.g. C:\\...)
+          "FileName" = pathAlleleFrequencySummary, # must be absolute path (e.g. C:\\...)
           "DoHardyWeinberg" = paste(as.integer(DoHardyWeinberg)), # "1" to do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium
           "HWMinExpectedFrequency" = paste(as.integer(HWMinExpectedFrequency)), # "5" is default
           "UseYatesCorrection" = paste(as.integer(UseYatesCorrection)), # "1" to use Yates correction when calculating chi-square values with one degree of freedom
@@ -90,18 +102,14 @@ cervus_alf <- function(cervusCL_location,
           "DoNullAllele" = paste(as.integer(DoNullAllele)) # "1" to estimate null allele frequency
         ),
         AlleleFrequencyDataFile = list(
-          "FileName" = AlleleFrequencyDataFileName, # must be absolute path (e.g. C:\\...)
+          "FileName" = pathAlleleFrequencyData, # must be absolute path (e.g. C:\\...)
           "HeaderRow" = "1" # If header row present, set to "1", if not set to "0"
         ))
       
-      if (require(ini)) {
-        ini::write.ini(x = cervus_crv, filepath = cervus_crv$FileInfo$FileName) # requires ini package to format settings file
-      } else {
-        cat("WARNING: Please install the 'ini' package using install.package('ini')")
-      }
+      ini::write.ini(x = cervus_crv, filepath = cervus_crv$FileInfo$FileName) # requires ini package to format settings file
       
-      system(command = paste0('"', cervusCL_location, '" ', '"', AnalysisSettingsCrv, '" ', "/ALF /O")) # run the allele frequency analysis
-      system(command = paste0("cat ", '"', AlleleFrequencySummaryFileName, '"')) # display the results
+      system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
+      system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"')) # display the results
       
     } else {
       cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
