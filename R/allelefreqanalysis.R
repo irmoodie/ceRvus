@@ -19,18 +19,23 @@
 #' @param DoNullAllele TRUE/FALSE Estimate null allele frequency
 #' @return Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console.
 #' @examples 
-#' cervus_alf(CervusCLPath = cervusCL_location,
-#'            AnalysisFolderPath = analysis_folder,
-#'            GenotypeFile = "genotype_file.csv",
-#'            AnalysisName = "test_analysis",
-#'            GenotypeFile_NLoci = 6,
-#'            DoHardyWeinberg = TRUE,
-#'            HWMinExpectedFrequency = 5,
-#'            UseYatesCorrection = TRUE,
-#'            UseBonferroniCorrection = TRUE,
-#'            DoNullAllele = TRUE
-#'            )
-#' 
+#' CervusALF(
+#'   CervusCLPath = "C:\\Program Files (x86)\\Field Genetics\\Cervus\\Cervus CL\\CervusCL.exe",
+#'   AnalysisFolderPath = "C:\\Analysis",
+#'   AnalysisName = "CERVUS_Analysis",
+#'   GenotypeFile_FileName = "genotype_file.csv",
+#'   GenotypeFile_HasHeader = TRUE,
+#'   GenotypeFile_ReadLocusNames = TRUE,
+#'   GenotypeFile_IDColumnNumber = 1,
+#'   GenotypeFile_FirstAlleleColumnNumber = 2,
+#'   GenotypeFile_ColumnsPerLocus = 2,
+#'   GenotypeFile_NLoci = 6,
+#'   DoHardyWeinberg = TRUE,
+#'   HWMinExpectedFrequency = 5,
+#'   UseYatesCorrection = TRUE,
+#'   UseBonferroniCorrection = TRUE,
+#'   DoNullAllele = TRUE
+# ')
 #' @export
 
 CervusALF <- function(CervusCLPath,
@@ -52,9 +57,9 @@ CervusALF <- function(CervusCLPath,
   
   # Specify paths to files
   pathGenotypeFile <- file.path(AnalysisFolderPath, GenotypeFile_FileName, fsep = "\\")
-  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName, ".crv"), fsep = "\\")
-  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, "AlleleFrequencyAnalysis.txt", fsep = "\\")
-  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, "AlleleFrequencyAnalysis.alf", fsep = "\\")
+  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = "\\")
+  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.txt"), fsep = "\\")
+  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.alf"), fsep = "\\")
   
   # Check that CervusCLPath points to something
   if (!missing(CervusCLPath)) {

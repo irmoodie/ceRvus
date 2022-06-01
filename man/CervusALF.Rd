@@ -60,16 +60,20 @@ Currently the function creates the .crv file that contains the settings for the 
 Perform an Allele Frequency Analysis uisng CervusCL
 }
 \examples{
-cervus_alf(CervusCLPath = cervusCL_location,
-           AnalysisFolderPath = analysis_folder,
-           GenotypeFile = "genotype_file.csv",
-           AnalysisName = "test_analysis",
-           GenotypeFile_NLoci = 6,
-           DoHardyWeinberg = TRUE,
-           HWMinExpectedFrequency = 5,
-           UseYatesCorrection = TRUE,
-           UseBonferroniCorrection = TRUE,
-           DoNullAllele = TRUE
-           )
-
+CervusALF(
+  CervusCLPath = "C:\\\\Program Files (x86)\\\\Field Genetics\\\\Cervus\\\\Cervus CL\\\\CervusCL.exe",
+  AnalysisFolderPath = "C:\\\\Analysis",
+  AnalysisName = "CERVUS_Analysis",
+  GenotypeFile_FileName = "genotype_file.csv",
+  GenotypeFile_HasHeader = TRUE,
+  GenotypeFile_ReadLocusNames = TRUE,
+  GenotypeFile_IDColumnNumber = 1,
+  GenotypeFile_FirstAlleleColumnNumber = 2,
+  GenotypeFile_ColumnsPerLocus = 2,
+  GenotypeFile_NLoci = 6,
+  DoHardyWeinberg = TRUE,
+  HWMinExpectedFrequency = 5,
+  UseYatesCorrection = TRUE,
+  UseBonferroniCorrection = TRUE,
+  DoNullAllele = TRUE
 }
