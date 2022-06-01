@@ -1,28 +1,31 @@
 #' Allele Frequency Analysis
 #'
-#' Perform an Allele Frequency Analysis uisng CervusCL
+#' Perform an Allele Frequency Analysis uisng CervusCL. 
+#' You should be familiar with Cervus before using this function. 
+#' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
+#' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
 #' @import ini
 #' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com)
 #' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
-#' @param AnalysisName Can specify a custom name for the analysis, which will be saved as the .crv filename
+#' @param AnalysisName Can specify a custom name for the analysis, which will be saved in the output filenames
 #' @param GenotypeFile_FileName The filename of the genotype file. (e.g. genotype.csv)
 #' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row
 #' @param GenotypeFile_ReadLocusNames TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE)
 #' @param GenotypeFile_IDColumnNumber Column number that identifies each individual
 #' @param GenotypeFile_FirstAlleleColumnNumber Column number which contains the first allele
-#' @param GenotypeFile_ColumnsPerLocus What format are the loci in? One allele per column = 2 columns per loci. See Cervus helpfiles for more info.
+#' @param GenotypeFile_ColumnsPerLocus What format are the loci in? One allele per column = 2 columns per locus. See Cervus helpfiles for more info.
 #' @param GenotypeFile_NLoci Number of loci in the genotype file
 #' @param DoHardyWeinberg TRUE/FALSE: Do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium
 #' @param HWMinExpectedFrequency Default is 5
 #' @param UseYatesCorrection TRUE/FALSE: Use Yates correction when calculating chi-square values with one degree of freedom
 #' @param UseBonferroniCorrection TRUE/FALSE: Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously
-#' @param DoNullAllele TRUE/FALSE Estimate null allele frequency
+#' @param DoNullAllele TRUE/FALSE: Estimate null allele frequency
 #' @return Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console.
 #' @examples 
 #' CervusALF(
 #'   CervusCLPath = "C:\\Program Files (x86)\\Field Genetics\\Cervus\\Cervus CL\\CervusCL.exe",
 #'   AnalysisFolderPath = "C:\\Analysis",
-#'   AnalysisName = "CERVUS_Analysis",
+#'   AnalysisName = "Cervus_Analysis",
 #'   GenotypeFile_FileName = "genotype_file.csv",
 #'   GenotypeFile_HasHeader = TRUE,
 #'   GenotypeFile_ReadLocusNames = TRUE,
@@ -40,7 +43,7 @@
 
 CervusALF <- function(CervusCLPath,
                        AnalysisFolderPath, 
-                       AnalysisName = "CERVUS_Analysis", 
+                       AnalysisName = "Cervus_Analysis", 
                        GenotypeFile_FileName,
                        GenotypeFile_HasHeader = TRUE,
                        GenotypeFile_ReadLocusNames = TRUE,
@@ -94,7 +97,7 @@ CervusALF <- function(CervusCLPath,
         ),
         CodecFile = list(
           "FileName" = "", # must be absolute path (e.g. C:\\...)
-          "HeaderRow" = "1", # If header row present, set to "1", if not set to "0"
+          "HeaderRow" = "1",
           "UseSameCodingForAllLoci" = "1", # should probably be kept as "1"
           "GenotypeFileName" = pathGenotypeFile # must be absolute path (e.g. C:\\...)
         ),
@@ -108,7 +111,7 @@ CervusALF <- function(CervusCLPath,
         ),
         AlleleFrequencyDataFile = list(
           "FileName" = pathAlleleFrequencyData, # must be absolute path (e.g. C:\\...)
-          "HeaderRow" = "1" # If header row present, set to "1", if not set to "0"
+          "HeaderRow" = "1"
         ))
       
       ini::write.ini(x = cervus_crv, filepath = cervus_crv$FileInfo$FileName) # requires ini package to format settings file
