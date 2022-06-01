@@ -5,8 +5,7 @@ An R package for interacting with the parentage analysis software [Cervus](http:
 The package can be currently installed from GitHub using the following commands:
 ```
 # install.package("devtools")
-library(devtools)
-install_github("irmoodie/ceRvus");
+devtools::install_github("irmoodie/ceRvus");
 ```
 As Cervus is a Windows only programme, the package will only work (and really be of any use) on Windows.
 
