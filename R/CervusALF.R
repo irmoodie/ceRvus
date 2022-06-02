@@ -76,11 +76,6 @@ CervusALF <- function(CervusCLPath,
           "ProgramVersion" = "3.0",
           "FileVersion" = "3.0.7.0"
         ),
-        Registration = list(
-          "UserName" = "",
-          "UserCompany" = "",
-          "Code" = ""
-        ),
         FileInfo = list(
           "FileName" = pathAnalysisSettings, # must be absolute path (e.g. C:\\...)
           "FileType" = ".crv",
@@ -128,6 +123,7 @@ CervusALF <- function(CervusCLPath,
         ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
         return(ALFSummary)
       }
+      cat("\nAnalysis complete!")
       
     } else {
       cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
