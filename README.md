@@ -1,5 +1,5 @@
 # ceRvus
-An R package for interacting with the parentage analysis software [Cervus](http://www.fieldgenetics.com/pages/aboutCervus_Overview.jsp) from within an R environment.
+R package for interacting with the parentage analysis software [Cervus](http://www.fieldgenetics.com/pages/aboutCervus_Overview.jsp) from within an R environment.
 
 ## Installation
 The package can be currently installed from GitHub using the following commands:
