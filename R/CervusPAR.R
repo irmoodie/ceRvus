@@ -54,16 +54,16 @@ CervusPAR <-
     OffspringFile_KnownParentIDColumnNumber = 0,
     OffspringFile_IncludesCandidateParents = FALSE,
     OffspringFile_CandidateParentIDColumnNumber = 0,
-    CandidateFemaleFile_FileName = NULL,
-    CandidateFemaleFile_HasHeader = NULL,
+    CandidateFemaleFile_FileName = "",
+    CandidateFemaleFile_HasHeader = FALSE,
     CandidateFemaleFile_CandidateParentFormat = "One column for all offspring",
-    CandidateFemaleFile_OffspringIDColumnNumber = NULL,
-    CandidateFemaleFile_CandidateParentIDColumnNumber = NULL,
-    CandidateMaleFile_FileName = NULL,
-    CandidateMaleFile_HasHeader = NULL,
+    CandidateFemaleFile_OffspringIDColumnNumber = "",
+    CandidateFemaleFile_CandidateParentIDColumnNumber = "",
+    CandidateMaleFile_FileName = "",
+    CandidateMaleFile_HasHeader = FALSE,
     CandidateMaleFile_CandidateParentFormat = "One column for all offspring",
-    CandidateMaleFile_OffspringIDColumnNumber = NULL,
-    CandidateMaleFile_CandidateParentIDColumnNumber = NULL,
+    CandidateMaleFile_OffspringIDColumnNumber = "",
+    CandidateMaleFile_CandidateParentIDColumnNumber = "",
     UseSimulationParameters = TRUE,
     CalculateConfidenceLevels = TRUE,
     AlwaysTestSelfing = FALSE,
@@ -86,8 +86,18 @@ CervusPAR <-
         pathParentageDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Parentage.sim"), fsep = "\\")
         
         pathOffspringFile <- file.path(AnalysisFolderPath, OffspringFile_FileName, fsep = "\\")
-        pathCandidateFemaleFile <- file.path(AnalysisFolderPath, CandidateFemaleFile_FileName, fsep = "\\")
-        pathCandidateMaleFile <- file.path(AnalysisFolderPath, CandidateMaleFile_FileName, fsep = "\\")
+        
+        if (CandidateFemaleFile_FileName != "") {
+          pathCandidateFemaleFile <- file.path(AnalysisFolderPath, CandidateFemaleFile_FileName, fsep = "\\")
+        } else {
+          pathCandidateFemaleFile <- CandidateFemaleFile_FileName
+        }
+        
+        if (CandidateMaleFile_FileName != "") {
+          pathCandidateMaleFile <- file.path(AnalysisFolderPath, CandidateMaleFile_FileName, fsep = "\\")
+        } else {
+          pathCandidateMaleFile <- CandidateMaleFile_FileName
+        }
         
         CervusCRVFile <- ini::read.ini(pathAnalysisSettings)
         
@@ -162,6 +172,7 @@ CervusPAR <-
         
         system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/PAR /O")) # run the analysis
         system(command = paste0("cat ", '"', pathParentageSummaryFile, '"')) # display the results
+        cat("\nAnalysis complete!")
         
       } else {
         cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
