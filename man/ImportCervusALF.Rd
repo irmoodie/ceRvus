@@ -13,7 +13,7 @@ ImportCervusALF(ALFSummaryFile)
 Returns the tables in the Cervus allele frequency analysis summary file, formatted for use in R
 }
 \description{
-Imports the summary file produced from a Cervus allele frequency analysis (the .txt file)
+Imports the summary file produced from a Cervus allele frequency analysis (the .txt file). Can be called directly in the CervusALF function with ImportALF = TRUE.
 }
 \examples{
 ImportCervusALF(ALFSummaryFile = "AlleleFrequencyAnalysis.txt")

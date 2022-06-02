@@ -1,6 +1,6 @@
 #' Import summary of allele frequency analysis
 #'
-#' Imports the summary file produced from a Cervus allele frequency analysis (the .txt file)
+#' Imports the summary file produced from a Cervus allele frequency analysis (the .txt file). Can be called directly in the CervusALF function with ImportALF = TRUE.
 #' @import stringr
 #' @param CervusALFSummaryFile The path to the allele frequency analysis summary file (.txt file)
 #' @return Returns the tables in the Cervus allele frequency analysis summary file, formatted for use in R
