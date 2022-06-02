@@ -176,6 +176,7 @@ CervusSIM <-
         
         system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/SIM /O")) # run the simulation
         system(command = paste0("cat ", '"', pathSimulationSummaryFile, '"')) # display the results
+        cat("\nSimulations complete!")
         
       } else {
         cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
