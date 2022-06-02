@@ -3,7 +3,6 @@
 #' You should be familiar with Cervus before using this function. 
 #' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
 #' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
-#' @import stringr
 #' @import ini
 #' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).
 #' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
