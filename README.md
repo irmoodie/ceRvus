@@ -22,3 +22,5 @@ Current goals for the package are to be able to parameterise and run:
 - Parentage analysis
 
 from within R, as well as importing Cervus' output directly into R.
+
+In general, the package expects all the files for the analysis to be located within a single folder.
