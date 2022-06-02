@@ -160,7 +160,7 @@ CervusPAR <-
         
         ini::write.ini(x = CervusCRVPAR, filepath = pathAnalysisSettings) # requires ini package to format settings file
         
-        system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/PAR /O")) # run the simulation
+        system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/PAR /O")) # run the analysis
         system(command = paste0("cat ", '"', pathParentageSummaryFile, '"')) # display the results
         
       } else {
