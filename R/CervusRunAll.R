@@ -3,6 +3,7 @@
 #' Given an already configured Cervus project file, this function will re-run the full analysis. 
 #' This is often helpful for writing fully reproducible analyses.
 #' Ensure that only one Cervus project file is found within the AnalysisFolderPath (.crv file).
+#' The function will update the paths for any files referenced in the cervus project file, if they do not match the current path of the analysis.
 #' @import ini
 #' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).
 #' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.

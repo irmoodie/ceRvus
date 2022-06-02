@@ -20,4 +20,5 @@ Outputs analysis summaries to the console, and if ImportData = TRUE returns a li
 Given an already configured Cervus project file, this function will re-run the full analysis. 
 This is often helpful for writing fully reproducible analyses.
 Ensure that only one Cervus project file is found within the AnalysisFolderPath (.crv file).
+The function will update the paths for any files referenced in the cervus project file, if they do not match the current path of the analysis.
 }
