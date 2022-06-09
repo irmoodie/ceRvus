@@ -18,8 +18,8 @@
 #' @param MinTypedLoci Threshold for number of typed loci for an individual to be included in the analysis.
 #' @param CriticalStatisticName "Delta" or "LOD". "Delta" recommended. See the Cervus help files.
 #' @param TruncateAtZero TRUE/FALSE
-#' @param RelaxedConfidence Relaxed confidence level (default is 80%)
-#' @param StrictConfidence Strict confidence level (default is 95%)
+#' @param RelaxedConfidence Relaxed confidence level (default is 80\%)
+#' @param StrictConfidence Strict confidence level (default is 95\%)
 #' @param SimulateInbreeding TRUE/FALSE: Should inbreeding be simulated? You should also set ParentRelatedness and InbreedingRate if TRUE.
 #' @param ParentRelatedness The probability that an allele in one parent is identical by descent to the corresponding allele in the other parent.
 #' @param InbreedingRate The proportion of simulated offspring whose true parents are related to each other.
@@ -104,7 +104,7 @@ CervusSIM <-
         CervusCRVSIM <- list(
           SimulationParameters = list(
             "AnalysisType" = paste0(AnalysisType),
-            "NOffspring" = paste0(NOffspring),
+            "NOffspring" = paste0(format(NOffspring, scientific = FALSE)),
             "NCandidateMales" = paste0(NCandidateMales),
             "PropCandidateMalesSampled" = paste0(PropCandidateMalesSampled),
             "NCandidateFemales" = paste0(NCandidateFemales),

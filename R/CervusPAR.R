@@ -127,8 +127,8 @@ CervusPAR <-
             "FileName" = pathCandidateFemaleFile,
             "HeaderRow" = paste0(as.integer(CandidateFemaleFile_HasHeader)),
             "CandidateParentFormat" = paste0(CandidateFemaleFile_CandidateParentFormat),
-            "OffspringIDColumnNumber" = paste0(CandidateFemaleFile_CandidateParentFormat),
-            "CandidateParentIDColumnNumber" = paste0(CandidateFemaleFile_CandidateParentFormat)
+            "OffspringIDColumnNumber" = paste0(CandidateFemaleFile_OffspringIDColumnNumber),
+            "CandidateParentIDColumnNumber" = paste0(CandidateFemaleFile_CandidateParentIDColumnNumber)
           ),
           CandidateMaleFile = list(
             "FileName" = pathCandidateMaleFile,

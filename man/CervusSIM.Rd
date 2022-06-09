@@ -77,9 +77,9 @@ CervusSIM(
 
 \item{TruncateAtZero}{TRUE/FALSE}
 
-\item{RelaxedConfidence}{Relaxed confidence level (default is 80%)}
+\item{RelaxedConfidence}{Relaxed confidence level (default is 80\%)}
 
-\item{StrictConfidence}{Strict confidence level (default is 95%)}
+\item{StrictConfidence}{Strict confidence level (default is 95\%)}
 
 \item{SimulateInbreeding}{TRUE/FALSE: Should inbreeding be simulated? You should also set ParentRelatedness and InbreedingRate if TRUE.}
 
