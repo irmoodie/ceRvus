@@ -65,12 +65,45 @@ indivstatloc <- grep(
   summaryfile
 )
 
-SummaryStatistics[["NOffspring"]] <- read.table(text = summaryfile[(indivstatloc+2):(indivstatloc+4)], header = FALSE, sep = "\t") |> 
+SummaryStatistics$NOffspring <- read.table(text = summaryfile[(indivstatloc+2):(indivstatloc+4)], header = FALSE, sep = "\t") |> 
   tidyr::separate(col = V1, into = c("stat", "value"), sep = ":") |> 
   dplyr::mutate(stat = trimws(stat),
                 value = trimws(value))
 
-SummaryStatistics[["Results"]] <- readr::read_tsv(PARResultsFile)
+if (stringr::str_split(string = basename(PARResultsFile), pattern = "\\.")[[1]][2] == "csv") {
+  SummaryStatistics$results$all <- readr::read_csv(PARResultsFile, show_col_types = FALSE)
+}
+
+if (stringr::str_split(string = basename(PARResultsFile), pattern = "\\.")[[1]][2] != "csv") {
+  SummaryStatistics$results$all <- readr::read_tsv(PARResultsFile, show_col_types = FALSE)
+}
+
+SummaryStatistics$results$all <- SummaryStatistics$results$all |>
+  dplyr::rename(offspring_id = "Offspring ID",
+                loci_typed_offspring = "Loci typed...2",
+                known_id = "Mother ID",
+                loci_typed_known = "Loci typed...4",
+                offspring_known_loci_compared = "Pair loci compared...5",
+                offspring_known_loci_mismatching = "Pair loci mismatching...6",
+                offspring_known_lod_score = "Pair LOD score...7",
+                candidate_id = "Candidate father ID",
+                loci_typed_candidate = "Loci typed...9",
+                offspring_candidate_loci_compared = "Pair loci compared...10",
+                offspring_candidate_loci_mismatching = "Pair loci mismatching...11",
+                offspring_candidate_lod_score = "Pair LOD score...12",
+                offspring_candidate_delta = "Pair Delta",
+                offspring_candidate_confidence = "Pair confidence",
+                offspring_candidate_known_loci_compared = "Trio loci compared",
+                offspring_candidate_known_loci_mismatching = "Trio loci mismatching",
+                offspring_candidate_known_lod_score = "Trio LOD score",
+                offspring_candidate_known_delta = "Trio Delta",
+                offspring_candidate_known_confidence = "Trio confidence")
+
+SummaryStatistics$results$strict <- SummaryStatistics$results$all |> 
+  dplyr::filter(offspring_candidate_known_confidence == "*")
+
+SummaryStatistics$results$relaxed <- SummaryStatistics$results$all |> 
+  dplyr::filter(offspring_candidate_known_confidence == "+" | offspring_candidate_known_confidence == "*")
 
 
 return(SummaryStatistics)
