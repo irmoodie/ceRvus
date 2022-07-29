@@ -109,7 +109,7 @@ if (!known_parents){
   SummaryStatistics$results$all <- SummaryStatistics$results$all |>
     dplyr::rename(offspring_id = "Offspring ID",
                   loci_typed_offspring = "Loci typed...2",
-                  mother_id = "Candidate Mother ID",
+                  mother_id = "Candidate mother ID",
                   loci_typed_known = "Loci typed...4",
                   offspring_known_loci_compared = "Pair loci compared...5",
                   offspring_known_loci_mismatching = "Pair loci mismatching...6",
