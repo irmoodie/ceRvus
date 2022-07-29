@@ -4,12 +4,14 @@
 \alias{ImportCervusPAR}
 \title{Import summary and data from a Cervus parentage analysis}
 \usage{
-ImportCervusPAR(PARSummaryFile, PARResultsFile)
+ImportCervusPAR(PARSummaryFile, PARResultsFile, known_parents = TRUE)
 }
 \arguments{
 \item{PARSummaryFile}{The summary file (.txt)}
 
 \item{PARResultsFile}{The results file (.sim)}
+
+\item{known_parents}{Was the mother known? Default TRUE}
 }
 \value{
 A list containing the summarised information, and the results of the parentage analysis.

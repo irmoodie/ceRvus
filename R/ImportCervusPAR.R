@@ -6,11 +6,12 @@
 #' @import tidyr
 #' @param PARSummaryFile The summary file (.txt)
 #' @param PARResultsFile The results file (.sim)
+#' @param known_parents Was the mother known? Default TRUE
 #' @return A list containing the summarised information, and the results of the parentage analysis.
 #' @export
 #'
 
-ImportCervusPAR <- function(PARSummaryFile, PARResultsFile){
+ImportCervusPAR <- function(PARSummaryFile, PARResultsFile, known_parents = TRUE){
 
 summaryfile <- readLines(PARSummaryFile)
 
@@ -78,26 +79,55 @@ if (stringr::str_split(string = basename(PARResultsFile), pattern = "\\.")[[1]][
   SummaryStatistics$results$all <- readr::read_tsv(PARResultsFile, show_col_types = FALSE)
 }
 
-SummaryStatistics$results$all <- SummaryStatistics$results$all |>
-  dplyr::rename(offspring_id = "Offspring ID",
-                loci_typed_offspring = "Loci typed...2",
-                known_id = "Mother ID",
-                loci_typed_known = "Loci typed...4",
-                offspring_known_loci_compared = "Pair loci compared...5",
-                offspring_known_loci_mismatching = "Pair loci mismatching...6",
-                offspring_known_lod_score = "Pair LOD score...7",
-                candidate_id = "Candidate father ID",
-                loci_typed_candidate = "Loci typed...9",
-                offspring_candidate_loci_compared = "Pair loci compared...10",
-                offspring_candidate_loci_mismatching = "Pair loci mismatching...11",
-                offspring_candidate_lod_score = "Pair LOD score...12",
-                offspring_candidate_delta = "Pair Delta",
-                offspring_candidate_confidence = "Pair confidence",
-                offspring_candidate_known_loci_compared = "Trio loci compared",
-                offspring_candidate_known_loci_mismatching = "Trio loci mismatching",
-                offspring_candidate_known_lod_score = "Trio LOD score",
-                offspring_candidate_known_delta = "Trio Delta",
-                offspring_candidate_known_confidence = "Trio confidence")
+if (known_parents){
+
+  SummaryStatistics$results$all <- SummaryStatistics$results$all |>
+    dplyr::rename(offspring_id = "Offspring ID",
+                  loci_typed_offspring = "Loci typed...2",
+                  known_id = "Mother ID",
+                  loci_typed_known = "Loci typed...4",
+                  offspring_known_loci_compared = "Pair loci compared...5",
+                  offspring_known_loci_mismatching = "Pair loci mismatching...6",
+                  offspring_known_lod_score = "Pair LOD score...7",
+                  candidate_id = "Candidate father ID",
+                  loci_typed_candidate = "Loci typed...9",
+                  offspring_candidate_loci_compared = "Pair loci compared...10",
+                  offspring_candidate_loci_mismatching = "Pair loci mismatching...11",
+                  offspring_candidate_lod_score = "Pair LOD score...12",
+                  offspring_candidate_delta = "Pair Delta",
+                  offspring_candidate_confidence = "Pair confidence",
+                  offspring_candidate_known_loci_compared = "Trio loci compared",
+                  offspring_candidate_known_loci_mismatching = "Trio loci mismatching",
+                  offspring_candidate_known_lod_score = "Trio LOD score",
+                  offspring_candidate_known_delta = "Trio Delta",
+                  offspring_candidate_known_confidence = "Trio confidence")
+
+}
+
+if (!known_parents){
+
+  SummaryStatistics$results$all <- SummaryStatistics$results$all |>
+    dplyr::rename(offspring_id = "Offspring ID",
+                  loci_typed_offspring = "Loci typed...2",
+                  mother_id = "Candidate Mother ID",
+                  loci_typed_known = "Loci typed...4",
+                  offspring_known_loci_compared = "Pair loci compared...5",
+                  offspring_known_loci_mismatching = "Pair loci mismatching...6",
+                  offspring_known_lod_score = "Pair LOD score...7",
+                  father_id = "Candidate father ID",
+                  loci_typed_candidate = "Loci typed...9",
+                  offspring_candidate_loci_compared = "Pair loci compared...10",
+                  offspring_candidate_loci_mismatching = "Pair loci mismatching...11",
+                  offspring_candidate_lod_score = "Pair LOD score...12",
+                  offspring_candidate_delta = "Pair Delta",
+                  offspring_candidate_confidence = "Pair confidence",
+                  offspring_candidate_known_loci_compared = "Trio loci compared",
+                  offspring_candidate_known_loci_mismatching = "Trio loci mismatching",
+                  offspring_candidate_known_lod_score = "Trio LOD score",
+                  offspring_candidate_known_delta = "Trio Delta",
+                  offspring_candidate_known_confidence = "Trio confidence")
+
+}
 
 SummaryStatistics$results$strict <- SummaryStatistics$results$all |> 
   dplyr::filter(offspring_candidate_known_confidence == "*")
