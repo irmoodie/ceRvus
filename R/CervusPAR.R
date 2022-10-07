@@ -1,6 +1,6 @@
 #' Run parentage analysis using CervusCL
 #'
-#' You should be familiar with Cervus before using this function. 
+#' You should be familiar with Cervus before using this function.
 #' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
 #' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
 #' @import ini
@@ -34,73 +34,69 @@
 #' @param LikelihoodErrorRate Default is 0.01
 #' @param CriticalStatisticName Delta" or "LOD". "Delta" recommended. See the Cervus help files.
 #' @param TruncateAtZero TRUE/FALSE
-#' @param OutputType Default is "The most-likely parent", see the Cervus help files for more.
-#' @param OutputSortedBy Default is "Joint LOD score", see the Cervus help files for more.
+#' @param OutputType Default is "The most-likely parent", see the Cervus help files for more. For fractional assignment, use "All parents".
+#' @param OutputSortedBy Default is "ID", see the Cervus help files for more.
 #' @param OutputIncludeNonExclusionProbabilities TRUE/FALSE
 #' @return Currently prints the results to the console, and saves the parentage analysis data in AnalysisFolderPath
 #'
 #' @export
 
-CervusPAR <- 
-  function(
-    CervusCLPath,
-    AnalysisFolderPath, 
-    AnalysisName = "Cervus_Analysis",
-    AnalysisType,
-    OffspringFile_FileName,
-    OffspringFile_HasHeader = TRUE,
-    OffspringFile_OffspringIDColumnNumber = 1,
-    OffspringFile_IncludesKnownParents = FALSE,
-    OffspringFile_KnownParentIDColumnNumber = 0,
-    OffspringFile_IncludesCandidateParents = FALSE,
-    OffspringFile_CandidateParentIDColumnNumber = 0,
-    CandidateFemaleFile_FileName = "",
-    CandidateFemaleFile_HasHeader = FALSE,
-    CandidateFemaleFile_CandidateParentFormat = "One column for all offspring",
-    CandidateFemaleFile_OffspringIDColumnNumber = "",
-    CandidateFemaleFile_CandidateParentIDColumnNumber = "",
-    CandidateMaleFile_FileName = "",
-    CandidateMaleFile_HasHeader = FALSE,
-    CandidateMaleFile_CandidateParentFormat = "One column for all offspring",
-    CandidateMaleFile_OffspringIDColumnNumber = "",
-    CandidateMaleFile_CandidateParentIDColumnNumber = "",
-    UseSimulationParameters = TRUE,
-    CalculateConfidenceLevels = TRUE,
-    AlwaysTestSelfing = FALSE,
-    MinTypedLoci,
-    UseCorrectedLikelihoods = TRUE,
-    UseMistypingRateAsLikelihoodErrorRate = TRUE,
-    LikelihoodErrorRate = 0.01,
-    CriticalStatisticName = "Delta",
-    TruncateAtZero = TRUE,
-    OutputType = "The most-likely parent",
-    OutputSortedBy = "Joint LOD score",
-    OutputIncludeNonExclusionProbabilities = FALSE
-  ){
-    
+CervusPAR <-
+  function(CervusCLPath,
+           AnalysisFolderPath,
+           AnalysisName = "Cervus_Analysis",
+           AnalysisType,
+           OffspringFile_FileName,
+           OffspringFile_HasHeader = TRUE,
+           OffspringFile_OffspringIDColumnNumber = 1,
+           OffspringFile_IncludesKnownParents = FALSE,
+           OffspringFile_KnownParentIDColumnNumber = 0,
+           OffspringFile_IncludesCandidateParents = FALSE,
+           OffspringFile_CandidateParentIDColumnNumber = 0,
+           CandidateFemaleFile_FileName = "",
+           CandidateFemaleFile_HasHeader = FALSE,
+           CandidateFemaleFile_CandidateParentFormat = "One column for all offspring",
+           CandidateFemaleFile_OffspringIDColumnNumber = "",
+           CandidateFemaleFile_CandidateParentIDColumnNumber = "",
+           CandidateMaleFile_FileName = "",
+           CandidateMaleFile_HasHeader = FALSE,
+           CandidateMaleFile_CandidateParentFormat = "One column for all offspring",
+           CandidateMaleFile_OffspringIDColumnNumber = "",
+           CandidateMaleFile_CandidateParentIDColumnNumber = "",
+           UseSimulationParameters = TRUE,
+           CalculateConfidenceLevels = TRUE,
+           AlwaysTestSelfing = FALSE,
+           MinTypedLoci,
+           UseCorrectedLikelihoods = TRUE,
+           UseMistypingRateAsLikelihoodErrorRate = TRUE,
+           LikelihoodErrorRate = 0.01,
+           CriticalStatisticName = "Delta",
+           TruncateAtZero = TRUE,
+           OutputType = "The most-likely parent",
+           OutputSortedBy = "ID",
+           OutputIncludeNonExclusionProbabilities = FALSE) {
     if (!missing(CervusCLPath)) {
       if (file.exists(CervusCLPath)) {
-        
-        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = "\\")
+        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_settings", ".crv"), fsep = "\\")
         pathParentageSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Parentage.txt"), fsep = "\\")
         pathParentageDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Parentage.sim"), fsep = "\\")
-        
+
         pathOffspringFile <- file.path(AnalysisFolderPath, OffspringFile_FileName, fsep = "\\")
-        
+
         if (CandidateFemaleFile_FileName != "") {
           pathCandidateFemaleFile <- file.path(AnalysisFolderPath, CandidateFemaleFile_FileName, fsep = "\\")
         } else {
           pathCandidateFemaleFile <- CandidateFemaleFile_FileName
         }
-        
+
         if (CandidateMaleFile_FileName != "") {
           pathCandidateMaleFile <- file.path(AnalysisFolderPath, CandidateMaleFile_FileName, fsep = "\\")
         } else {
           pathCandidateMaleFile <- CandidateMaleFile_FileName
         }
-        
+
         CervusCRVFile <- ini::read.ini(pathAnalysisSettings)
-        
+
         CervusCRVPAR <- list(
           ParentageParameters = list(
             "AnalysisType" = paste0(AnalysisType),
@@ -145,8 +141,9 @@ CervusPAR <-
             "OutputType" = OutputType,
             "SortedBy" = OutputSortedBy,
             "IncludeNonExclusionProbabilities" = paste0(as.integer(OutputIncludeNonExclusionProbabilities))
-          ))
-        
+          )
+        )
+
         if (exists(x = "ParentageParameters", where = CervusCRVFile)) {
           CervusCRVFile <- within(CervusCRVFile, rm(ParentageParameters))
         }
@@ -165,15 +162,14 @@ CervusPAR <-
         if (exists(x = "ParentageDataFile", where = CervusCRVFile)) {
           CervusCRVFile <- within(CervusCRVFile, rm(ParentageDataFile))
         }
-        
+
         CervusCRVPAR <- append(CervusCRVFile, CervusCRVPAR)
-        
+
         ini::write.ini(x = CervusCRVPAR, filepath = pathAnalysisSettings) # requires ini package to format settings file
-        
+
         system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/PAR /O")) # run the analysis
         system(command = paste0("cat ", '"', pathParentageSummaryFile, '"')) # display the results
         cat("\nAnalysis complete!")
-        
       } else {
         cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
       }

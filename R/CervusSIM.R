@@ -1,6 +1,6 @@
 #' Run parentage simulations using CervusCL
 #'
-#' You should be familiar with Cervus before using this function. 
+#' You should be familiar with Cervus before using this function.
 #' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
 #' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
 #' @import ini
@@ -25,12 +25,12 @@
 #' @param InbreedingRate The proportion of simulated offspring whose true parents are related to each other.
 #' @param AlwaysTestSelfing TRUE/FALSE: Test for self-fertilisation
 #' @param SimulateFemaleRelatives TRUE/FALSE: simulate relatives of the mother-father-offspring trio among the pool of candidate parents.
-#' @param FemalePropRelatives The average proportion of female candidate parents that are relatives. 
+#' @param FemalePropRelatives The average proportion of female candidate parents that are relatives.
 #' @param FemaleRelatedTo Relatives can be related to the offspring, its true mother or its true father. See Cervus helpfiles.
-#' @param FemaleRelatedness The probability that each allele belonging to a relative is identical by descent to the corresponding allele carried by the individual to which they are related. 
+#' @param FemaleRelatedness The probability that each allele belonging to a relative is identical by descent to the corresponding allele carried by the individual to which they are related.
 #' @param MalePropRelatives TRUE/FALSE: simulate relatives of the mother-father-offspring trio among the pool of candidate parents.
 #' @param MaleRelatedTo Relatives can be related to the offspring, its true mother or its true father. See Cervus helpfiles.
-#' @param MaleRelatedness The probability that each allele belonging to a relative is identical by descent to the corresponding allele carried by the individual to which they are related. 
+#' @param MaleRelatedness The probability that each allele belonging to a relative is identical by descent to the corresponding allele carried by the individual to which they are related.
 #' @param UseCorrectedLikelihoods TRUE/FALSE: Use Kalinowski et al. (2007) likelihood equations (recommended)
 #' @param UseMistypingRateAsLikelihoodErrorRate TRUE/FALSE
 #' @param LikelihoodErrorRate Default is 0.01
@@ -48,59 +48,56 @@
 #'
 #' @export
 
-CervusSIM <- 
-  function(
-    CervusCLPath,
-    AnalysisFolderPath, 
-    AnalysisName = "Cervus_Analysis",
-    AnalysisType,
-    NOffspring = 10000,
-    NCandidateMales = 0,
-    PropCandidateMalesSampled = 0,
-    NCandidateFemales = 0,
-    PropCandidateFemalesSampled = 0,
-    PropLociTyped,
-    PropLociMistyped = 0.01,
-    MinTypedLoci,
-    CriticalStatisticName = "Delta",
-    TruncateAtZero = TRUE,
-    RelaxedConfidence = 80,
-    StrictConfidence = 95,
-    SimulateInbreeding = FALSE,
-    ParentRelatedness = 0,
-    InbreedingRate = 0,
-    AlwaysTestSelfing = FALSE,
-    SimulateFemaleRelatives = FALSE,
-    FemalePropRelatives = 0,
-    FemaleRelatedTo = "Offspring",
-    FemaleRelatedness = 0,
-    SimulateMaleRelatives = FALSE,
-    MalePropRelatives = 0,
-    MaleRelatedTo = "Offspring",
-    MaleRelatedness = 0,
-    UseCorrectedLikelihoods = TRUE,
-    UseMistypingRateAsLikelihoodErrorRate = TRUE,
-    LikelihoodErrorRate = 0.01,
-    RepeatSimulation = FALSE,
-    NRepeats = 1,
-    ApplyPreviousSimulationData = FALSE,
-    GenerateTables = FALSE,
-    SaveRawStatisticScores = FALSE,
-    GenerateHistograms = FALSE,
-    NCategories = 5,
-    MinStatistic = 0,
-    MaxStatistic = 0,
-    PreviousSimulationDataFile = ""){
-    
+CervusSIM <-
+  function(CervusCLPath,
+           AnalysisFolderPath,
+           AnalysisName = "Cervus_Analysis",
+           AnalysisType,
+           NOffspring = 10000,
+           NCandidateMales = 0,
+           PropCandidateMalesSampled = 0,
+           NCandidateFemales = 0,
+           PropCandidateFemalesSampled = 0,
+           PropLociTyped,
+           PropLociMistyped = 0.01,
+           MinTypedLoci,
+           CriticalStatisticName = "Delta",
+           TruncateAtZero = TRUE,
+           RelaxedConfidence = 80,
+           StrictConfidence = 95,
+           SimulateInbreeding = FALSE,
+           ParentRelatedness = 0,
+           InbreedingRate = 0,
+           AlwaysTestSelfing = FALSE,
+           SimulateFemaleRelatives = FALSE,
+           FemalePropRelatives = 0,
+           FemaleRelatedTo = "Offspring",
+           FemaleRelatedness = 0,
+           SimulateMaleRelatives = FALSE,
+           MalePropRelatives = 0,
+           MaleRelatedTo = "Offspring",
+           MaleRelatedness = 0,
+           UseCorrectedLikelihoods = TRUE,
+           UseMistypingRateAsLikelihoodErrorRate = TRUE,
+           LikelihoodErrorRate = 0.01,
+           RepeatSimulation = FALSE,
+           NRepeats = 1,
+           ApplyPreviousSimulationData = FALSE,
+           GenerateTables = FALSE,
+           SaveRawStatisticScores = FALSE,
+           GenerateHistograms = FALSE,
+           NCategories = 5,
+           MinStatistic = 0,
+           MaxStatistic = 0,
+           PreviousSimulationDataFile = "") {
     if (!missing(CervusCLPath)) {
       if (file.exists(CervusCLPath)) {
-        
-        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = "\\")
+        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_settings", ".crv"), fsep = "\\")
         pathSimulationSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.txt"), fsep = "\\")
         pathSimulationDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.sim"), fsep = "\\")
-        
+
         CervusCRVFile <- ini::read.ini(pathAnalysisSettings)
-        
+
         CervusCRVSIM <- list(
           SimulationParameters = list(
             "AnalysisType" = paste0(AnalysisType),
@@ -153,7 +150,7 @@ CervusSIM <-
             "FileName" = paste0(PreviousSimulationDataFile) # must be absolute path (e.g. C:\\...)
           )
         )
-        
+
         if (exists(x = "SimulationParameters", where = CervusCRVFile)) {
           CervusCRVFile <- within(CervusCRVFile, rm(SimulationParameters))
         }
@@ -169,20 +166,18 @@ CervusSIM <-
         if (exists(x = "PreviousSimulationDataFile", where = CervusCRVFile)) {
           CervusCRVFile <- within(CervusCRVFile, rm(PreviousSimulationDataFile))
         }
-        
+
         CervusCRVSIM <- append(CervusCRVFile, CervusCRVSIM)
-        
+
         ini::write.ini(x = CervusCRVSIM, filepath = pathAnalysisSettings) # requires ini package to format settings file
-        
+
         system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/SIM /O")) # run the simulation
         system(command = paste0("cat ", '"', pathSimulationSummaryFile, '"')) # display the results
         cat("\nSimulations complete!")
-        
       } else {
         cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
       }
     } else {
       cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
     }
-    
   }
