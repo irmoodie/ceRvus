@@ -8,13 +8,15 @@
 #' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).
 #' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
 #' @param AnalysisName Can specify a custom name for the analysis, which will be saved in the output filenames.
+#' @param wineCommand ONLY FOR WINE USERS (e.g. wine64)
+#' @param wineHomeDirectory ONLY FOR WINE USERS Where should Wine find your home directory? (e.g. "Z:")
+#' @param wineTempDirectory = ONLY FOR WINE USERS Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp")
 #' @param ImportALF TRUE/FALSE: Import the alele frequency analysis summary tables in an R friendly format.
 #' @param GenotypeFile_FileName The filename of the genotype file. (e.g. genotype.csv).
-#' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row.
+#' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row?
 #' @param GenotypeFile_ReadLocusNames TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE).
 #' @param GenotypeFile_IDColumnNumber Column number that identifies each individual.
 #' @param GenotypeFile_FirstAlleleColumnNumber Column number which contains the first allele.
-#' @param GenotypeFile_ColumnsPerLocus What format are the loci in? One allele per column = 2 columns per locus. See Cervus helpfiles for more info.
 #' @param GenotypeFile_NLoci Number of loci in the genotype file.
 #' @param DoHardyWeinberg TRUE/FALSE: Do Hardy-Weinberg test box to test each locus for whether it conforms to HW equilibrium.
 #' @param HWMinExpectedFrequency Default is 5.
@@ -45,14 +47,16 @@
 
 CervusALF <- function(CervusCLPath,
                       AnalysisFolderPath, 
-                      AnalysisName = "Cervus_Analysis",
+                      AnalysisName = "CervusAnalysis",
+                      wineCommand = NA,
+                      wineHomeDirectory = "Z:",
+                      wineTempDirectory = NA,
                       ImportALF = TRUE,
                       GenotypeFile_FileName,
                       GenotypeFile_HasHeader = TRUE,
                       GenotypeFile_ReadLocusNames = TRUE,
                       GenotypeFile_IDColumnNumber = 1,
                       GenotypeFile_FirstAlleleColumnNumber = 2,
-                      GenotypeFile_ColumnsPerLocus = 2,
                       GenotypeFile_NLoci,
                       DoHardyWeinberg = TRUE,
                       HWMinExpectedFrequency = 5,
@@ -62,10 +66,10 @@ CervusALF <- function(CervusCLPath,
 ) {
   
   # Specify paths to files
-  pathGenotypeFile <- file.path(AnalysisFolderPath, GenotypeFile_FileName, fsep = "\\")
-  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = "\\")
-  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.txt"), fsep = "\\")
-  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.alf"), fsep = "\\")
+  pathGenotypeFile <- file.path(AnalysisFolderPath, GenotypeFile_FileName, fsep = .Platform$file.sep)
+  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = .Platform$file.sep)
+  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.txt"), fsep = .Platform$file.sep)
+  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.alf"), fsep = .Platform$file.sep)
   
   # Check that CervusCLPath points to something
   if (!missing(CervusCLPath)) {
@@ -74,7 +78,9 @@ CervusALF <- function(CervusCLPath,
         ProgramInfo = list(
           "ProgramName" = "Cervus",
           "ProgramVersion" = "3.0",
-          "FileVersion" = "3.0.7.0"
+          "FileVersion" = "3.0.7.0",
+          "CeRvusVersion" = paste0(packageVersion("ceRvus")),
+          "Notes" = "This project file was generated with ceRvus, an R package. Any issues should be reported at: https://github.com/irmoodie/ceRvus/issues"
         ),
         FileInfo = list(
           "FileName" = pathAnalysisSettings, # must be absolute path (e.g. C:\\...)
@@ -88,16 +94,8 @@ CervusALF <- function(CervusCLPath,
           "FirstAlleleColumnNumber" = paste0(GenotypeFile_FirstAlleleColumnNumber), # column number where alleles start,
           "IDColumnNumber" = paste0(GenotypeFile_IDColumnNumber), # column number that identifies each individual sampled,
           "NLoci" = paste0(GenotypeFile_NLoci), # number of loci to be used
-          "PropLociTyped" = "0", # should remain as "0" here,
-          "ColumnsPerLocus" = paste0(GenotypeFile_ColumnsPerLocus), # set as "2" assuming the default input format for CERVUS
           "SexColumn" = "0", # should probably remain as "0", don't think it would be required here
-          "UnknownSexLabel" = ""
-        ),
-        CodecFile = list(
-          "FileName" = "", # must be absolute path (e.g. C:\\...)
-          "HeaderRow" = "1",
-          "UseSameCodingForAllLoci" = "1", # should probably be kept as "1"
-          "GenotypeFileName" = pathGenotypeFile # must be absolute path (e.g. C:\\...)
+          "UnknownSexLabel" = "" # not required at this stage
         ),
         AlleleFrequencySummaryFile = list(
           "FileName" = pathAlleleFrequencySummary, # must be absolute path (e.g. C:\\...)
@@ -112,17 +110,49 @@ CervusALF <- function(CervusCLPath,
           "HeaderRow" = "1"
         ))
       
-      ini::write.ini(x = cervus_crv, filepath = cervus_crv$FileInfo$FileName) # requires ini package to format settings file
-      
-      system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
-      system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"')) # display the results
-      
-      ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
-      
-      if (isTRUE(ImportALF)) {
-        ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
-        return(ALFSummary)
+      if (!is.na(wineCommand)) {
+        cervus_crv$FileInfo$FileName <- paste0(wineHomeDirectory, pathAnalysisSettings)
+        cervus_crv$GenotypeFile$FileName = paste0(wineHomeDirectory, pathGenotypeFile)
+        cervus_crv$AlleleFrequencySummaryFile$FileName = paste0(wineHomeDirectory, pathAlleleFrequencySummary)
+        cervus_crv$AlleleFrequencyDataFile$FileName = paste0(wineHomeDirectory, pathAlleleFrequencyData)
+        
+        # Normal cervus runs perfect, but currently a wine bug is breaking the command line version
+        # https://bugs.winehq.org/show_bug.cgi?id=49334
+        # as a work around, r will create the temp file locations needed
+        
+        dir.create(
+          path = file.path(wineTempDirectory, AnalysisFolderPath, fsep = .Platform$file.sep), 
+          recursive = TRUE, 
+          showWarnings = TRUE)
+        
       }
+      
+      
+      ini::write.ini(x = cervus_crv, filepath = pathAnalysisSettings) # requires ini package to format settings file
+      
+      if (is.na(wineCommand)) {
+        system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
+        # system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"')) # display the results
+      }
+      
+      if (!is.na(wineCommand)) {
+        
+        cat(paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/ALF /O"))
+        
+        system(command = paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
+        # system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"'))  # display the results
+        
+      }
+
+
+      # ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
+      # 
+      # if (isTRUE(ImportALF)) {
+      #   ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
+      #   return(ALFSummary)
+      # }
+      
+      
       cat("\nAnalysis complete!")
       
     } else {
