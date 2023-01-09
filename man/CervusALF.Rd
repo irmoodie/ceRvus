@@ -2,19 +2,22 @@
 % Please edit documentation in R/CervusALF.R
 \name{CervusALF}
 \alias{CervusALF}
-\title{Allele Frequency Analysis}
+\title{Perform an Allele Frequency Analysis}
 \usage{
 CervusALF(
   CervusCLPath,
   AnalysisFolderPath,
-  AnalysisName = "Cervus_Analysis",
+  AnalysisName = "CervusAnalysis",
+  wineCommand = NA,
+  wineHomeDirectory = "Z:",
+  wineTempDirectory = NA,
   ImportALF = TRUE,
+  ResultsToConsole = FALSE,
   GenotypeFile_FileName,
   GenotypeFile_HasHeader = TRUE,
   GenotypeFile_ReadLocusNames = TRUE,
   GenotypeFile_IDColumnNumber = 1,
   GenotypeFile_FirstAlleleColumnNumber = 2,
-  GenotypeFile_ColumnsPerLocus = 2,
   GenotypeFile_NLoci,
   DoHardyWeinberg = TRUE,
   HWMinExpectedFrequency = 5,
@@ -24,25 +27,31 @@ CervusALF(
 )
 }
 \arguments{
-\item{CervusCLPath}{Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).}
+\item{CervusCLPath}{Path to cervusCL.exe (Cervus can be downloaded at http://www.fieldgenetics.com).}
 
-\item{AnalysisFolderPath}{Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.}
+\item{AnalysisFolderPath}{Path to the folder which contains the files required for the analysis. All output will also be saved in this folder. I recommend making a folder within your project for this purpose.}
 
-\item{AnalysisName}{Can specify a custom name for the analysis, which will be saved in the output filenames.}
+\item{AnalysisName}{User can specify a custom name for the analysis, which will be saved in the output filenames. Default is to use "CervusAnalysis".}
+
+\item{wineCommand}{ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)}
+
+\item{wineHomeDirectory}{ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".}
+
+\item{wineTempDirectory}{ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.}
 
 \item{ImportALF}{TRUE/FALSE: Import the alele frequency analysis summary tables in an R friendly format.}
 
+\item{ResultsToConsole}{TRUE/FALSE: Should the results of the allele frequency analysis be output into the console?}
+
 \item{GenotypeFile_FileName}{The filename of the genotype file. (e.g. genotype.csv).}
 
-\item{GenotypeFile_HasHeader}{TRUE/FALSE: Does the genotype file contain a header row.}
+\item{GenotypeFile_HasHeader}{TRUE/FALSE: Does the genotype file contain a header row?}
 
 \item{GenotypeFile_ReadLocusNames}{TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE).}
 
 \item{GenotypeFile_IDColumnNumber}{Column number that identifies each individual.}
 
 \item{GenotypeFile_FirstAlleleColumnNumber}{Column number which contains the first allele.}
-
-\item{GenotypeFile_ColumnsPerLocus}{What format are the loci in? One allele per column = 2 columns per locus. See Cervus helpfiles for more info.}
 
 \item{GenotypeFile_NLoci}{Number of loci in the genotype file.}
 
@@ -57,19 +66,20 @@ CervusALF(
 \item{DoNullAllele}{TRUE/FALSE: Estimate null allele frequency.}
 }
 \value{
-Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console. If ImportALF is set to TURE, the function also imports the summarised data.
+The function creates the .crv file that contains the settings for the analysis, then performs the analysis by supplying cervusCL.exe with the .crv file. The results are saved in the usual Cervus format, and printed to the console if desired. If ImportALF is set to TURE, the function also imports the summarised data into a list object.
 }
 \description{
-Perform an Allele Frequency Analysis uisng CervusCL. 
+Performs an Allele Frequency Analysis uisng CervusCL. 
 You should be familiar with Cervus before using this function. 
 The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
-Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
+Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv), often at the expense of brevity. This may change in future versions.
+This function is wine compatible (see docs).
 }
 \examples{
 CervusALF(
   CervusCLPath = "C:\\\\Program Files (x86)\\\\Field Genetics\\\\Cervus\\\\Cervus CL\\\\CervusCL.exe",
   AnalysisFolderPath = "C:\\\\Analysis",
-  AnalysisName = "Cervus_Analysis",
+  AnalysisName = "CervusAnalysis",
   ImportALF = TRUE,
   GenotypeFile_FileName = "genotype_file.csv",
   GenotypeFile_HasHeader = TRUE,
@@ -82,5 +92,6 @@ CervusALF(
   HWMinExpectedFrequency = 5,
   UseYatesCorrection = TRUE,
   UseBonferroniCorrection = TRUE,
-  DoNullAllele = TRUE
+  DoNullAllele = TRUE,
+  ResultsToConsole = TRUE
 }
