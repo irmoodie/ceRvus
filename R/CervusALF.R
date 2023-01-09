@@ -1,17 +1,16 @@
-#' Allele Frequency Analysis
+#' Perform an Allele Frequency Analysis
 #'
-#' Perform an Allele Frequency Analysis uisng CervusCL. 
+#' Performs an Allele Frequency Analysis uisng CervusCL. 
 #' You should be familiar with Cervus before using this function. 
 #' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
-#' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
+#' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv), often at the expense of brevity. This may change in future versions.
+#' This function is wine compatible (see docs).
 #' @import ini
-#' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).
-#' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
-#' @param AnalysisName Can specify a custom name for the analysis, which will be saved in the output filenames.
-#' @param wineCommand ONLY FOR WINE USERS (e.g. wine64)
-#' @param wineHomeDirectory ONLY FOR WINE USERS Where should Wine find your home directory? (e.g. "Z:")
-#' @param wineTempDirectory = ONLY FOR WINE USERS Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp")
+#' @param CervusCLPath Path to cervusCL.exe (Cervus can be downloaded at http://www.fieldgenetics.com).
+#' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder. I recommend making a folder within your project for this purpose.
+#' @param AnalysisName User can specify a custom name for the analysis, which will be saved in the output filenames. Default is to use "CervusAnalysis".
 #' @param ImportALF TRUE/FALSE: Import the alele frequency analysis summary tables in an R friendly format.
+#' @param ResultsToConsole TRUE/FALSE: Should the results of the allele frequency analysis be output into the console?
 #' @param GenotypeFile_FileName The filename of the genotype file. (e.g. genotype.csv).
 #' @param GenotypeFile_HasHeader TRUE/FALSE: Does the genotype file contain a header row?
 #' @param GenotypeFile_ReadLocusNames TRUE/FALSE: Should Cervus read the locus names in the file (TRUE), or give them generic names (FALSE).
@@ -23,12 +22,15 @@
 #' @param UseYatesCorrection TRUE/FALSE: Use Yates correction when calculating chi-square values with one degree of freedom.
 #' @param UseBonferroniCorrection TRUE/FALSE: Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously.
 #' @param DoNullAllele TRUE/FALSE: Estimate null allele frequency.
-#' @return Currently the function creates the .crv file that contains the settings for the analysis, then performs the analysis. The results are saved in the usual CERVUS format, and printed to the console. If ImportALF is set to TURE, the function also imports the summarised data. 
+#' @param wineCommand ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)
+#' @param wineHomeDirectory ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".
+#' @param wineTempDirectory ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.
+#' @return The function creates the .crv file that contains the settings for the analysis, then performs the analysis by supplying cervusCL.exe with the .crv file. The results are saved in the usual Cervus format, and printed to the console if desired. If ImportALF is set to TURE, the function also imports the summarised data into a list object. 
 #' @examples 
 #' CervusALF(
 #'   CervusCLPath = "C:\\Program Files (x86)\\Field Genetics\\Cervus\\Cervus CL\\CervusCL.exe",
 #'   AnalysisFolderPath = "C:\\Analysis",
-#'   AnalysisName = "Cervus_Analysis",
+#'   AnalysisName = "CervusAnalysis",
 #'   ImportALF = TRUE,
 #'   GenotypeFile_FileName = "genotype_file.csv",
 #'   GenotypeFile_HasHeader = TRUE,
@@ -41,7 +43,8 @@
 #'   HWMinExpectedFrequency = 5,
 #'   UseYatesCorrection = TRUE,
 #'   UseBonferroniCorrection = TRUE,
-#'   DoNullAllele = TRUE
+#'   DoNullAllele = TRUE,
+#'   ResultsToConsole = TRUE
 # ')
 #' @export
 
@@ -52,6 +55,7 @@ CervusALF <- function(CervusCLPath,
                       wineHomeDirectory = "Z:",
                       wineTempDirectory = NA,
                       ImportALF = TRUE,
+                      ResultsToConsole = FALSE,
                       GenotypeFile_FileName,
                       GenotypeFile_HasHeader = TRUE,
                       GenotypeFile_ReadLocusNames = TRUE,
@@ -80,7 +84,7 @@ CervusALF <- function(CervusCLPath,
           "ProgramVersion" = "3.0",
           "FileVersion" = "3.0.7.0",
           "CeRvusVersion" = paste0(packageVersion("ceRvus")),
-          "Notes" = "This project file was generated with ceRvus, an R package. Any issues should be reported at: https://github.com/irmoodie/ceRvus/issues"
+          "Notes" = "This project file was generated with ceRvus, an R package to help interact with Cervus. Any issues related to it's usage should be reported at: https://github.com/irmoodie/ceRvus/issues"
         ),
         FileInfo = list(
           "FileName" = pathAnalysisSettings, # must be absolute path (e.g. C:\\...)
@@ -119,6 +123,7 @@ CervusALF <- function(CervusCLPath,
         # Normal cervus runs perfect, but currently a wine bug is breaking the command line version
         # https://bugs.winehq.org/show_bug.cgi?id=49334
         # as a work around, r will create the temp file locations needed
+        # you shouldn't have to worry about temp folder bloat, as CervusCL clears it after it runs
         
         dir.create(
           path = file.path(wineTempDirectory, AnalysisFolderPath, fsep = .Platform$file.sep), 
@@ -130,27 +135,29 @@ CervusALF <- function(CervusCLPath,
       
       ini::write.ini(x = cervus_crv, filepath = pathAnalysisSettings) # requires ini package to format settings file
       
+      # No Wine run
+      
       if (is.na(wineCommand)) {
         system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
-        # system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"')) # display the results
+        if (ResultsToConsole) {
+          system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"')) # display the results 
+        }
       }
       
+      # Wine run
+      
       if (!is.na(wineCommand)) {
-        
         cat(paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/ALF /O"))
-        
         system(command = paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
-        # system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"'))  # display the results
-        
+        if (ResultsToConsole) {
+        system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"'))  # display the results
+        }
       }
 
-
-      # ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
-      # 
-      # if (isTRUE(ImportALF)) {
-      #   ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
-      #   return(ALFSummary)
-      # }
+      if (ImportALF) {
+        ALFSummary <- ImportCervusALF(ALFSummaryFile = pathAlleleFrequencySummary)
+        return(ALFSummary)
+      }
       
       
       cat("\nAnalysis complete!")
