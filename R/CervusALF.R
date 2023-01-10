@@ -48,26 +48,28 @@
 # ')
 #' @export
 
-CervusALF <- function(CervusCLPath,
-                      AnalysisFolderPath, 
-                      AnalysisName = "CervusAnalysis",
-                      wineCommand = NA,
-                      wineHomeDirectory = "Z:",
-                      wineTempDirectory = NA,
-                      ImportALF = TRUE,
-                      ResultsToConsole = FALSE,
-                      GenotypeFile_FileName,
-                      GenotypeFile_HasHeader = TRUE,
-                      GenotypeFile_ReadLocusNames = TRUE,
-                      GenotypeFile_IDColumnNumber = 1,
-                      GenotypeFile_FirstAlleleColumnNumber = 2,
-                      GenotypeFile_NLoci,
-                      DoHardyWeinberg = TRUE,
-                      HWMinExpectedFrequency = 5,
-                      UseYatesCorrection = TRUE,
-                      UseBonferroniCorrection = TRUE,
-                      DoNullAllele = TRUE
-) {
+CervusALF <- 
+  function(
+    CervusCLPath,
+    AnalysisFolderPath, 
+    AnalysisName = "CervusAnalysis",
+    ImportALF = TRUE,
+    ResultsToConsole = FALSE,
+    GenotypeFile_FileName,
+    GenotypeFile_HasHeader = TRUE,
+    GenotypeFile_ReadLocusNames = TRUE,
+    GenotypeFile_IDColumnNumber = 1,
+    GenotypeFile_FirstAlleleColumnNumber = 2,
+    GenotypeFile_NLoci,
+    DoHardyWeinberg = TRUE,
+    HWMinExpectedFrequency = 5,
+    UseYatesCorrection = TRUE,
+    UseBonferroniCorrection = TRUE,
+    DoNullAllele = TRUE,
+    wineCommand = NA,
+    wineHomeDirectory = "Z:",
+    wineTempDirectory = NA
+  ) {
   
   # Specify paths to files
   pathGenotypeFile <- file.path(AnalysisFolderPath, GenotypeFile_FileName, fsep = .Platform$file.sep)
@@ -128,7 +130,7 @@ CervusALF <- function(CervusCLPath,
         dir.create(
           path = file.path(wineTempDirectory, AnalysisFolderPath, fsep = .Platform$file.sep), 
           recursive = TRUE, 
-          showWarnings = TRUE)
+          showWarnings = FALSE)
         
       }
       
@@ -147,7 +149,6 @@ CervusALF <- function(CervusCLPath,
       # Wine run
       
       if (!is.na(wineCommand)) {
-        cat(paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/ALF /O"))
         system(command = paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/ALF /O")) # run the allele frequency analysis
         if (ResultsToConsole) {
         system(command = paste0("cat ", '"', pathAlleleFrequencySummary, '"'))  # display the results
@@ -160,7 +161,7 @@ CervusALF <- function(CervusCLPath,
       }
       
       
-      cat("\nAnalysis complete!")
+      cat("\nAnalysis complete!\n")
       
     } else {
       cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")

@@ -2,7 +2,9 @@
 #'
 #' You should be familiar with Cervus before using this function. 
 #' The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
-#' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
+#' Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv), often at the expense of brevity. This may change in future versions.
+#' This function is wine compatible (see docs).
+#' 
 #' @import ini
 #' @param CervusCLPath Path to cervusCL.exe (Cervus is found at http://www.fieldgenetics.com).
 #' @param AnalysisFolderPath Path to the folder which contains the files required for the analysis. All output will also be saved in this folder.
@@ -44,6 +46,10 @@
 #' @param MinStatistic Histogram setup
 #' @param MaxStatistic Histogram setup
 #' @param PreviousSimulationDataFile Path to previous simulation data file (not required unless ApplyPreviousSimulationData = TRUE)
+#' @param wineCommand ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)
+#' @param wineHomeDirectory ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".
+#' @param wineTempDirectory ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.
+#' @param ResultsToConsole TRUE/FALSE: Should the results of the allele frequency analysis be output into the console?
 #' @return Currently prints the results to the console, and saves the simulation data in AnalysisFolderPath
 #'
 #' @export
@@ -52,7 +58,7 @@ CervusSIM <-
   function(
     CervusCLPath,
     AnalysisFolderPath, 
-    AnalysisName = "Cervus_Analysis",
+    AnalysisName = "CervusAnalysis",
     AnalysisType,
     NOffspring = 10000,
     NCandidateMales = 0,
@@ -90,18 +96,22 @@ CervusSIM <-
     NCategories = 5,
     MinStatistic = 0,
     MaxStatistic = 0,
-    PreviousSimulationDataFile = ""){
+    PreviousSimulationDataFile = "",
+    ResultsToConsole = TRUE,
+    wineCommand = NA,
+    wineHomeDirectory = "Z:",
+    wineTempDirectory = NA){
     
     if (!missing(CervusCLPath)) {
       if (file.exists(CervusCLPath)) {
         
-        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = "\\")
-        pathSimulationSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.txt"), fsep = "\\")
-        pathSimulationDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.sim"), fsep = "\\")
+        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = .Platform$file.sep)
+        pathSimulationSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.txt"), fsep = .Platform$file.sep)
+        pathSimulationDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.sim"), fsep = .Platform$file.sep)
         
-        CervusCRVFile <- ini::read.ini(pathAnalysisSettings)
+        cervus_crv_file <- ini::read.ini(pathAnalysisSettings)
         
-        CervusCRVSIM <- list(
+        cervus_crv_sim <- list(
           SimulationParameters = list(
             "AnalysisType" = paste0(AnalysisType),
             "NOffspring" = paste0(format(NOffspring, scientific = FALSE)),
@@ -154,29 +164,61 @@ CervusSIM <-
           )
         )
         
-        if (exists(x = "SimulationParameters", where = CervusCRVFile)) {
-          CervusCRVFile <- within(CervusCRVFile, rm(SimulationParameters))
+        if (exists(x = "SimulationParameters", where = cervus_crv_file)) {
+          cervus_crv_file <- within(cervus_crv_file, rm(SimulationParameters))
         }
-        if (exists(x = "SimulationSummaryFile", where = CervusCRVFile)) {
-          CervusCRVFile <- within(CervusCRVFile, rm(SimulationSummaryFile))
+        if (exists(x = "SimulationSummaryFile", where = cervus_crv_file)) {
+          cervus_crv_file <- within(cervus_crv_file, rm(SimulationSummaryFile))
         }
-        if (exists(x = "SimulationDataFile", where = CervusCRVFile)) {
-          CervusCRVFile <- within(CervusCRVFile, rm(SimulationDataFile))
+        if (exists(x = "SimulationDataFile", where = cervus_crv_file)) {
+          cervus_crv_file <- within(cervus_crv_file, rm(SimulationDataFile))
         }
-        if (exists(x = "SimulationOutput", where = CervusCRVFile)) {
-          CervusCRVFile <- within(CervusCRVFile, rm(SimulationOutput))
+        if (exists(x = "SimulationOutput", where = cervus_crv_file)) {
+          cervus_crv_file <- within(cervus_crv_file, rm(SimulationOutput))
         }
-        if (exists(x = "PreviousSimulationDataFile", where = CervusCRVFile)) {
-          CervusCRVFile <- within(CervusCRVFile, rm(PreviousSimulationDataFile))
+        if (exists(x = "PreviousSimulationDataFile", where = cervus_crv_file)) {
+          cervus_crv_file <- within(cervus_crv_file, rm(PreviousSimulationDataFile))
         }
         
-        CervusCRVSIM <- append(CervusCRVFile, CervusCRVSIM)
+        if (!is.na(wineCommand)) {
+          cervus_crv_sim$SimulationSummaryFile$FileName = paste0(wineHomeDirectory, pathSimulationSummaryFile)
+          cervus_crv_sim$SimulationDataFile$FileName = paste0(wineHomeDirectory, pathSimulationDataFile)
+          
+          # Normal cervus runs perfect, but currently a wine bug is breaking the command line version
+          # https://bugs.winehq.org/show_bug.cgi?id=49334
+          # as a work around, r will create the temp file locations needed
+          # you shouldn't have to worry about temp folder bloat, as CervusCL clears it after it runs
+          
+          dir.create(
+            path = file.path(wineTempDirectory, AnalysisFolderPath, fsep = .Platform$file.sep), 
+            recursive = TRUE, 
+            showWarnings = FALSE)
+          
+        }
         
-        ini::write.ini(x = CervusCRVSIM, filepath = pathAnalysisSettings) # requires ini package to format settings file
+        cervus_crv_sim <- append(cervus_crv_file, cervus_crv_sim)
         
-        system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/SIM /O")) # run the simulation
-        system(command = paste0("cat ", '"', pathSimulationSummaryFile, '"')) # display the results
-        cat("\nSimulations complete!")
+        ini::write.ini(x = cervus_crv_sim, filepath = pathAnalysisSettings) # requires ini package to format settings file
+        
+        # No Wine run
+        
+        if (is.na(wineCommand)) {
+          system(command = paste0('"', CervusCLPath, '" ', '"', pathAnalysisSettings, '" ', "/SIM /O")) # run the simulation
+          if (ResultsToConsole) {
+            system(command = paste0("cat ", '"', pathSimulationSummaryFile, '"')) # display the results
+          }
+        }
+        
+        # Wine run
+        
+        if (!is.na(wineCommand)) {
+          system(command = paste0(wineCommand, ' "', CervusCLPath, '" ', '"', wineHomeDirectory, pathAnalysisSettings, '" ', "/SIM /O")) # run the allele frequency analysis
+          if (ResultsToConsole) {
+            system(command = paste0("cat ", '"', pathSimulationSummaryFile, '"'))  # display the results
+          }
+        }
+
+        cat("\nSimulations complete!\n")
         
       } else {
         cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
