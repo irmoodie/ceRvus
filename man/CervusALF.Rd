@@ -7,7 +7,7 @@
 CervusALF(
   CervusCLPath,
   AnalysisFolderPath,
-  AnalysisName = "CervusAnalysis",
+  AnalysisName = "",
   ImportALF = TRUE,
   ResultsToConsole = FALSE,
   GenotypeFile_FileName,

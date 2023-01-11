@@ -7,7 +7,7 @@
 CervusSIM(
   CervusCLPath,
   AnalysisFolderPath,
-  AnalysisName = "CervusAnalysis",
+  AnalysisName = "",
   AnalysisType,
   NOffspring = 10000,
   NCandidateMales = 0,

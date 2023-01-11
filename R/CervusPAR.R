@@ -51,7 +51,7 @@ CervusPAR <-
   function(
     CervusCLPath,
     AnalysisFolderPath, 
-    AnalysisName = "CervusAnalysis",
+    AnalysisName = "",
     AnalysisType,
     OffspringFile_FileName,
     OffspringFile_HasHeader = TRUE,
@@ -91,9 +91,9 @@ CervusPAR <-
     if (!missing(CervusCLPath)) {
       if (file.exists(CervusCLPath)) {
         
-        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = .Platform$file.sep)
-        pathParentageSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Parentage.txt"), fsep = .Platform$file.sep)
-        pathParentageDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Parentage.sim"), fsep = .Platform$file.sep)
+        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"Settings.crv"), fsep = .Platform$file.sep)
+        pathParentageSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "ParentageSummary.txt"), fsep = .Platform$file.sep)
+        pathParentageDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "ParentageData.txt"), fsep = .Platform$file.sep)
         
         pathOffspringFile <- file.path(AnalysisFolderPath, OffspringFile_FileName, fsep = .Platform$file.sep)
         

@@ -7,7 +7,7 @@
 CervusPAR(
   CervusCLPath,
   AnalysisFolderPath,
-  AnalysisName = "CervusAnalysis",
+  AnalysisName = "",
   AnalysisType,
   OffspringFile_FileName,
   OffspringFile_HasHeader = TRUE,

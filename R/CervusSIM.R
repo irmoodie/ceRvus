@@ -58,7 +58,7 @@ CervusSIM <-
   function(
     CervusCLPath,
     AnalysisFolderPath, 
-    AnalysisName = "CervusAnalysis",
+    AnalysisName = "",
     AnalysisType,
     NOffspring = 10000,
     NCandidateMales = 0,
@@ -105,9 +105,9 @@ CervusSIM <-
     if (!missing(CervusCLPath)) {
       if (file.exists(CervusCLPath)) {
         
-        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = .Platform$file.sep)
-        pathSimulationSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.txt"), fsep = .Platform$file.sep)
-        pathSimulationDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_Simulation.sim"), fsep = .Platform$file.sep)
+        pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"Settings.crv"), fsep = .Platform$file.sep)
+        pathSimulationSummaryFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "SimulationSummary.txt"), fsep = .Platform$file.sep)
+        pathSimulationDataFile <- file.path(AnalysisFolderPath, paste0(AnalysisName, "SimulationData.txt"), fsep = .Platform$file.sep)
         
         cervus_crv_file <- ini::read.ini(pathAnalysisSettings)
         

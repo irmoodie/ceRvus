@@ -52,7 +52,7 @@ CervusALF <-
   function(
     CervusCLPath,
     AnalysisFolderPath, 
-    AnalysisName = "CervusAnalysis",
+    AnalysisName = "",
     ImportALF = TRUE,
     ResultsToConsole = FALSE,
     GenotypeFile_FileName,
@@ -73,9 +73,9 @@ CervusALF <-
   
   # Specify paths to files
   pathGenotypeFile <- file.path(AnalysisFolderPath, GenotypeFile_FileName, fsep = .Platform$file.sep)
-  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"_settings", ".crv"), fsep = .Platform$file.sep)
-  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.txt"), fsep = .Platform$file.sep)
-  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, paste0(AnalysisName, "_AlleleFrequencyAnalysis.alf"), fsep = .Platform$file.sep)
+  pathAnalysisSettings <- file.path(AnalysisFolderPath, paste0(AnalysisName,"Settings.crv"), fsep = .Platform$file.sep)
+  pathAlleleFrequencySummary <- file.path(AnalysisFolderPath, paste0(AnalysisName, "AlleleFreqSummary.txt"), fsep = .Platform$file.sep)
+  pathAlleleFrequencyData <- file.path(AnalysisFolderPath, paste0(AnalysisName, "AlleleFreqData.txt"), fsep = .Platform$file.sep)
   
   # Check that CervusCLPath points to something
   if (!missing(CervusCLPath)) {
