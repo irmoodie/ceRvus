@@ -12,7 +12,7 @@ devtools::install_github("irmoodie/ceRvus");
 ```
 To install the lastest version of Cervus (package developed using 3.0.7.0), follow the instructions on the [field genetics website](http://www.fieldgenetics.com/pages/aboutCervus_Overview.jsp).
 
-The package relies on the [`{ini}`](https://github.com/dvdscripter/ini), [`{dplyr}`](https://github.com/tidyverse/dplyr), [`{stringr}`](https://github.com/tidyverse/stringr) and [`{tidyr}`](https://github.com/tidyverse/tidyr) packages.
+The package relies on the [ini](https://github.com/dvdscripter/ini), [dplyr](https://github.com/tidyverse/dplyr), [stringr](https://github.com/tidyverse/stringr) and [tidyr](https://github.com/tidyverse/tidyr) packages.
 
 ### Using MacOS or Linux?
 
@@ -32,8 +32,6 @@ ceRvus can currently parameterise and run:
 from within R, as well as importing Cervus' output directly into R. It does this through creating/editing the .crv file that Cervus uses to store settings, and by parsing the .txt files that contain results into a format friendly for creating publication quality tables, or for performing further analysis within R.
 
 In general, the package expects all the files for the analysis to be located within a single folder.
-
-If using with the R package `{targets}`, set `targetReturn = TRUE` to have the paths of output files returned.
 
 It is left up to the user to decide if they want to work with their genotype data in R, then export, or just work with already existing datafiles. Care should be taken when exporting from R to then be used in Cervus, ESPECIALLY WITH REGARD TO NAs. Cervus will treat the string 'NA' as an allele and estimate it's frequency etc!
 
