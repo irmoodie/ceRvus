@@ -1,5 +1,5 @@
 <p align="center">
-<img src="https://user-images.githubusercontent.com/38960700/211855393-96d482f1-e0ba-4393-bc83-328a69497111.png" width="250" height="250">
+<img src="https://user-images.githubusercontent.com/38960700/211855393-96d482f1-e0ba-4393-bc83-328a69497111.png" width="259" height="300">
 </p>
 
 # ceRvus
