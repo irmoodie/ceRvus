@@ -1,4 +1,4 @@
-#' Perform an Allele Frequency Analysis
+#' Perform an Allele Frequency Analysis using CervusCL
 #'
 #' Performs an Allele Frequency Analysis uisng CervusCL. 
 #' You should be familiar with Cervus before using this function. 

@@ -7,7 +7,7 @@
 CervusSIM(
   CervusCLPath,
   AnalysisFolderPath,
-  AnalysisName = "Cervus_Analysis",
+  AnalysisName = "CervusAnalysis",
   AnalysisType,
   NOffspring = 10000,
   NCandidateMales = 0,
@@ -45,7 +45,11 @@ CervusSIM(
   NCategories = 5,
   MinStatistic = 0,
   MaxStatistic = 0,
-  PreviousSimulationDataFile = ""
+  PreviousSimulationDataFile = "",
+  ResultsToConsole = TRUE,
+  wineCommand = NA,
+  wineHomeDirectory = "Z:",
+  wineTempDirectory = NA
 )
 }
 \arguments{
@@ -128,6 +132,14 @@ CervusSIM(
 \item{MaxStatistic}{Histogram setup}
 
 \item{PreviousSimulationDataFile}{Path to previous simulation data file (not required unless ApplyPreviousSimulationData = TRUE)}
+
+\item{ResultsToConsole}{TRUE/FALSE: Should the results of the allele frequency analysis be output into the console?}
+
+\item{wineCommand}{ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)}
+
+\item{wineHomeDirectory}{ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".}
+
+\item{wineTempDirectory}{ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.}
 }
 \value{
 Currently prints the results to the console, and saves the simulation data in AnalysisFolderPath
@@ -135,5 +147,6 @@ Currently prints the results to the console, and saves the simulation data in An
 \description{
 You should be familiar with Cervus before using this function. 
 The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
-Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
+Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv), often at the expense of brevity. This may change in future versions.
+This function is wine compatible (see docs).
 }

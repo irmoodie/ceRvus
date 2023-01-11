@@ -2,15 +2,12 @@
 % Please edit documentation in R/CervusALF.R
 \name{CervusALF}
 \alias{CervusALF}
-\title{Perform an Allele Frequency Analysis}
+\title{Perform an Allele Frequency Analysis using CervusCL}
 \usage{
 CervusALF(
   CervusCLPath,
   AnalysisFolderPath,
   AnalysisName = "CervusAnalysis",
-  wineCommand = NA,
-  wineHomeDirectory = "Z:",
-  wineTempDirectory = NA,
   ImportALF = TRUE,
   ResultsToConsole = FALSE,
   GenotypeFile_FileName,
@@ -23,7 +20,10 @@ CervusALF(
   HWMinExpectedFrequency = 5,
   UseYatesCorrection = TRUE,
   UseBonferroniCorrection = TRUE,
-  DoNullAllele = TRUE
+  DoNullAllele = TRUE,
+  wineCommand = NA,
+  wineHomeDirectory = "Z:",
+  wineTempDirectory = NA
 )
 }
 \arguments{
@@ -32,12 +32,6 @@ CervusALF(
 \item{AnalysisFolderPath}{Path to the folder which contains the files required for the analysis. All output will also be saved in this folder. I recommend making a folder within your project for this purpose.}
 
 \item{AnalysisName}{User can specify a custom name for the analysis, which will be saved in the output filenames. Default is to use "CervusAnalysis".}
-
-\item{wineCommand}{ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)}
-
-\item{wineHomeDirectory}{ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".}
-
-\item{wineTempDirectory}{ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.}
 
 \item{ImportALF}{TRUE/FALSE: Import the alele frequency analysis summary tables in an R friendly format.}
 
@@ -64,6 +58,12 @@ CervusALF(
 \item{UseBonferroniCorrection}{TRUE/FALSE: Use Bonferroni correction when carrying out the HW test for multiple loci simultaneously.}
 
 \item{DoNullAllele}{TRUE/FALSE: Estimate null allele frequency.}
+
+\item{wineCommand}{ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)}
+
+\item{wineHomeDirectory}{ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".}
+
+\item{wineTempDirectory}{ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.}
 }
 \value{
 The function creates the .crv file that contains the settings for the analysis, then performs the analysis by supplying cervusCL.exe with the .crv file. The results are saved in the usual Cervus format, and printed to the console if desired. If ImportALF is set to TURE, the function also imports the summarised data into a list object.
