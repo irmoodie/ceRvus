@@ -7,7 +7,7 @@
 CervusPAR(
   CervusCLPath,
   AnalysisFolderPath,
-  AnalysisName = "Cervus_Analysis",
+  AnalysisName = "CervusAnalysis",
   AnalysisType,
   OffspringFile_FileName,
   OffspringFile_HasHeader = TRUE,
@@ -37,7 +37,11 @@ CervusPAR(
   TruncateAtZero = TRUE,
   OutputType = "The most-likely parent",
   OutputSortedBy = "Joint LOD score",
-  OutputIncludeNonExclusionProbabilities = FALSE
+  OutputIncludeNonExclusionProbabilities = FALSE,
+  ResultsToConsole = TRUE,
+  wineCommand = NA,
+  wineHomeDirectory = "Z:",
+  wineTempDirectory = NA
 )
 }
 \arguments{
@@ -106,6 +110,14 @@ CervusPAR(
 \item{OutputSortedBy}{Default is "Joint LOD score", see the Cervus help files for more.}
 
 \item{OutputIncludeNonExclusionProbabilities}{TRUE/FALSE}
+
+\item{ResultsToConsole}{TRUE/FALSE: Should the results of the allele frequency analysis be output into the console?}
+
+\item{wineCommand}{ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)}
+
+\item{wineHomeDirectory}{ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".}
+
+\item{wineTempDirectory}{ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.}
 }
 \value{
 Currently prints the results to the console, and saves the parentage analysis data in AnalysisFolderPath
@@ -113,5 +125,6 @@ Currently prints the results to the console, and saves the parentage analysis da
 \description{
 You should be familiar with Cervus before using this function. 
 The arguments relate directly to settings within Cervus, usually selected by the user using the GUI.
-Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv).
+Argument names are such that it can easily be inferred what setting they change within a Cervus project file (.crv), often at the expense of brevity. This may change in future versions.
+This function is wine compatible (see docs).
 }
