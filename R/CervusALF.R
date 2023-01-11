@@ -25,6 +25,7 @@
 #' @param wineCommand ONLY FOR WINE USERS: give the command that should be used to call your installed version of wine (e.g. wine64)
 #' @param wineHomeDirectory ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".
 #' @param wineTempDirectory ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.
+#' @param targetReturn Return output file paths for use with the targets package. Will break if ImportALF == TRUE
 #' @return The function creates the .crv file that contains the settings for the analysis, then performs the analysis by supplying cervusCL.exe with the .crv file. The results are saved in the usual Cervus format, and printed to the console if desired. If ImportALF is set to TURE, the function also imports the summarised data into a list object. 
 #' @examples 
 #' CervusALF(
@@ -53,7 +54,7 @@ CervusALF <-
     CervusCLPath,
     AnalysisFolderPath, 
     AnalysisName = "CervusAnalysis",
-    ImportALF = TRUE,
+    ImportALF = FALSE,
     ResultsToConsole = FALSE,
     GenotypeFile_FileName,
     GenotypeFile_HasHeader = TRUE,
@@ -68,7 +69,8 @@ CervusALF <-
     DoNullAllele = TRUE,
     wineCommand = NA,
     wineHomeDirectory = "Z:",
-    wineTempDirectory = NA
+    wineTempDirectory = NA,
+    targetReturn = FALSE
   ) {
   
   # Specify paths to files
@@ -160,8 +162,12 @@ CervusALF <-
         return(ALFSummary)
       }
       
-      
       cat("\nAnalysis complete!\n")
+      
+      if (targetReturn) {
+        output_files <- c(pathAnalysisSettings, pathAlleleFrequencySummary, pathAlleleFrequencyData)
+        return(output_files)
+      }
       
     } else {
       cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")

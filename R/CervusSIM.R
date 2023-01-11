@@ -50,6 +50,7 @@
 #' @param wineHomeDirectory ONLY FOR WINE USERS: Where should Wine find your home directory? This is usually "Z:".
 #' @param wineTempDirectory ONLY FOR WINE USERS: Point wine to your Windows temp folder (e.g. "/Users/myname/.wine/drive_c/users/myname/Temp"). This is to fix a wine bug.
 #' @param ResultsToConsole TRUE/FALSE: Should the results of the allele frequency analysis be output into the console?
+#' @param targetReturn Return output file paths for use with the targets package
 #' @return Currently prints the results to the console, and saves the simulation data in AnalysisFolderPath
 #'
 #' @export
@@ -100,7 +101,9 @@ CervusSIM <-
     ResultsToConsole = TRUE,
     wineCommand = NA,
     wineHomeDirectory = "Z:",
-    wineTempDirectory = NA){
+    wineTempDirectory = NA,
+    targetReturn = FALSE
+    ){
     
     if (!missing(CervusCLPath)) {
       if (file.exists(CervusCLPath)) {
@@ -219,6 +222,11 @@ CervusSIM <-
         }
 
         cat("\nSimulations complete!\n")
+        
+        if (targetReturn) {
+          output_files <- c(new_pathAnalysisSettings, pathSimulationSummaryFile, pathSimulationDataFile)
+          return(output_files)
+          }
         
       } else {
         cat("WARNING: Cannot locate CervusCL.exe.\nPlease ensure you have provided the full system path e.g. C:\\...")
