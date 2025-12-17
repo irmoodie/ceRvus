@@ -2,6 +2,8 @@
 <img src="https://user-images.githubusercontent.com/38960700/211855393-96d482f1-e0ba-4393-bc83-328a69497111.png" width="259" height="300">
 </p>
 
+<p align="center" href="https://doi.org/10.5281/zenodo.17968977"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17968977.svg" alt="DOI"></p>
+
 # ceRvus
 R package for interacting with the parentage analysis software [Cervus](http://www.fieldgenetics.com/pages/aboutCervus_Overview.jsp) from within an R environment. The package also includes functions to make working with CervusCL via Wine (i.e. on Linux/MacOS) easier.
 
@@ -40,6 +42,21 @@ In general, the package expects all the files for the analysis to be located wit
 It is left up to the user to decide if they want to work with their genotype data in R, then export, or just work with already existing datafiles. Care should be taken when exporting from R to then be used in Cervus, ESPECIALLY WITH REGARD TO NAs. Cervus will treat the string 'NA' as an allele and estimate it's frequency etc!
 
 The package is by no-means perfect, it is very janky and hacky, but it functions. As all the heavy lifting is still done by CervusCL, so there is no performance loss or gain. 
+
+## Citation
+If you find ceRvus helpful, you can cite the following DOI: https://doi.org/10.5281/zenodo.17968976
+
+Or use the following BibLaTeX entry:
+
+```tex
+@software{moodieCervus2025,
+  title = {ceRvus v0.0.2.2},
+  author = {Moodie, Iain R.},
+  date = {2025-12-17},
+  doi = {10.5281/zenodo.17968977},
+  url = {https://github.com/irmoodie/ceRvus},
+}
+```
 
 ## Questions/Issues/Contributions
 Open an [Issue](https://github.com/irmoodie/ceRvus/issues) on GitHub, and I will get back to you when I can. Any suggestions, please open a pull request. 
