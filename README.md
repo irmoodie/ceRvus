@@ -44,7 +44,7 @@ It is left up to the user to decide if they want to work with their genotype dat
 The package is by no-means perfect, it is very janky and hacky, but it functions. As all the heavy lifting is still done by CervusCL, so there is no performance loss or gain. 
 
 ## Citation
-If you find ceRvus helpful, you can cite the following DOI: https://doi.org/10.5281/zenodo.17968976
+If you find ceRvus helpful, you can cite the following DOI: [https://doi.org/10.5281/zenodo.17968976](https://doi.org/10.5281/zenodo.17968977)
 
 Or use the following BibLaTeX entry:
 
