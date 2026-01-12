@@ -38,23 +38,28 @@ ImportCervusALF <- function(ALFSummaryFile){
   for (loci_n in 1:length(x)) {
     
     LociName <- LociSummary$Locus[loci_n]
+    k_alleles <- LociSummary$k[loci_n]
     cols <- c("Allele", "Count", "Hets", "Homs", "Freq", "FreqWithNull")
     
     # extract the allele frequency table for each loci
     if (loci_n != length(x)) {
       range <- (x[[loci_n]]):(x[[loci_n+1]])
-      PerLocusAlleleFrequencies[[LociName]] <- read.table(text = summaryfile[head(range[-(1:4)], -23)], col.names = cols)
+      PerLocusAlleleFrequencies[[LociName]] <- read.table(text = summaryfile[range[-(1:3)][1:k_alleles]], col.names = cols)
     }
     
     # extract the allele frequency table for the final loci in the dataset
     if (loci_n == length(x)) {
       range <- (x[[loci_n]]):(grep("\\*\\*\\*\\*\\*\\*\\*\\*", summaryfile))
-      PerLocusAlleleFrequencies[[LociName]] <- read.table(text = summaryfile[head(range[-(1:4)], -23)], col.names = cols)
+      PerLocusAlleleFrequencies[[LociName]] <- read.table(text = summaryfile[range[-(1:3)][1:k_alleles]], col.names = cols)
     }
     
     # extract the statistics table for each loci
+    stats_start <- 3 + k_alleles + 1
+    null_allele_line <- grep("Null allele frequency estimate", summaryfile[range])
+    stats_lines <- summaryfile[range[stats_start:null_allele_line]]
+    
     PerLocusStatistics[[LociName]] <- stringr::str_split(
-      string = summaryfile[head(range[-(1:(length(head(range[-(1:4)], -23))+5))], -3)],
+      string = stats_lines,
       pattern = ":",
       simplify = TRUE)
     PerLocusStatistics[[LociName]][,2] <- stringr::str_remove_all(string = PerLocusStatistics[[LociName]][,2], pattern = " ")
