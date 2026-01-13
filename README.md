@@ -2,7 +2,7 @@
 <img src="https://user-images.githubusercontent.com/38960700/211855393-96d482f1-e0ba-4393-bc83-328a69497111.png" width="259" height="300">
 </p>
 
-<p align="center" href="https://doi.org/10.5281/zenodo.17968977"><img src="https://zenodo.org/badge/DOI/10.5281/zenodo.17968977.svg" alt="DOI"></p>
+<p align="center" href="https://doi.org/10.5281/zenodo.17968976"><img src="https://zenodo.org/badge/498382224.svg" alt="DOI"></p>
 
 # ceRvus
 R package for interacting with the parentage analysis software [Cervus](http://www.fieldgenetics.com/pages/aboutCervus_Overview.jsp) from within an R environment. The package also includes functions to make working with CervusCL via Wine (i.e. on Linux/MacOS) easier.
@@ -44,16 +44,16 @@ It is left up to the user to decide if they want to work with their genotype dat
 The package is by no-means perfect, it is very janky and hacky, but it functions. As all the heavy lifting is still done by CervusCL, so there is no performance loss or gain. 
 
 ## Citation
-If you find ceRvus helpful, you can cite the following DOI: [https://doi.org/10.5281/zenodo.17968977](https://doi.org/10.5281/zenodo.17968977)
+If you find ceRvus helpful, you can cite the following DOI: [https://doi.org/10.5281/zenodo.17968976](https://doi.org/10.5281/zenodo.17968976)
 
 Or use the following BibLaTeX entry:
 
 ```tex
-@software{moodieCervus2025,
-  title = {ceRvus v0.0.2.2},
+@software{moodieCervus2026,
+  title = {ceRvus v0.0.3.0},
   author = {Moodie, Iain R.},
-  date = {2025-12-17},
-  doi = {10.5281/zenodo.17968977},
+  date = {2026-03-13},
+  doi = {10.5281/zenodo.18231860},
   url = {https://github.com/irmoodie/ceRvus},
 }
 ```
