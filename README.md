@@ -52,7 +52,7 @@ Or use the following BibLaTeX entry:
 @software{moodieCervus2026,
   title = {ceRvus v0.0.3.0},
   author = {Moodie, Iain R.},
-  date = {2026-03-13},
+  date = {2026-01-13},
   doi = {10.5281/zenodo.18231860},
   url = {https://github.com/irmoodie/ceRvus},
 }
